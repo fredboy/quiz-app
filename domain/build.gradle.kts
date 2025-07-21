@@ -12,3 +12,7 @@ kotlin {
     jvmToolchain(11)
 }
 
+dependencies {
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin)
+}
