@@ -13,6 +13,7 @@ internal class QuestionMapper(
             text = questionDto.text,
             answers = questionDto.answers.map(answerMapper::map),
             correctAnswerId = questionDto.correctAnswerId,
+            imageUrl = questionDto.imageUrl,
         )
     }
 }

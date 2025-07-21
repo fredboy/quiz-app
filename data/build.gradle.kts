@@ -18,10 +18,6 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin)
 
-    implementation(platform(libs.retrofit.bom))
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.kotlinx.serialization)
-
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
 }

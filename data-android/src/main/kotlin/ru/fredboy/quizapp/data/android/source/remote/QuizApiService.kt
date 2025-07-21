@@ -1,4 +1,4 @@
-package ru.fredboy.quizapp.data.source.remote
+package ru.fredboy.quizapp.data.android.source.remote
 
 import retrofit2.http.GET
 import ru.fredboy.quizapp.data.model.QuizDetailsDto

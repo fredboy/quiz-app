@@ -44,6 +44,10 @@ ktlint {
 }
 
 dependencies {
+    implementation(project(":data"))
+    implementation(project(":data-android"))
+    implementation(project(":domain"))
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.androidx)
     implementation(libs.bundles.compose)
