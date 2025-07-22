@@ -19,7 +19,7 @@ import androidx.room.Index
     indices = [
         Index("question_id"),
         Index("quiz_id"),
-    ]
+    ],
 )
 internal data class AnswerEntity(
     @ColumnInfo(name = "id") val id: Int,

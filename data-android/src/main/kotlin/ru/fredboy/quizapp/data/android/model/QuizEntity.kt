@@ -2,7 +2,6 @@ package ru.fredboy.quizapp.data.android.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import ru.fredboy.quizapp.domain.model.QuizStatus
 
 @Entity(
     tableName = "quizzes",

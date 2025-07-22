@@ -14,11 +14,11 @@ import androidx.room.Index
             parentColumns = [ "id" ],
             childColumns = [ "quiz_id" ],
             onDelete = ForeignKey.CASCADE,
-        )
+        ),
     ],
     indices = [
         Index("quiz_id"),
-    ]
+    ],
 )
 internal data class QuestionEntity(
     @ColumnInfo(name = "id") val id: Int,

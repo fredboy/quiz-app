@@ -15,11 +15,11 @@ import ru.fredboy.quizapp.domain.model.QuizStatus
             parentColumns = [ "id" ],
             childColumns = [ "quiz_id" ],
             onDelete = ForeignKey.CASCADE,
-        )
+        ),
     ],
     indices = [
-        Index("quiz_id")
-    ]
+        Index("quiz_id"),
+    ],
 )
 internal data class QuizStatusEntity(
     @PrimaryKey @ColumnInfo(name = "quiz_id") val quizId: Int,
