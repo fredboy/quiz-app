@@ -63,6 +63,8 @@ val dataAndroidModule = module {
             quizDao = get(),
             quizzesMapper = get(),
             quizMapper = get(),
+            questionMapper = get(),
+            answerMapper = get(),
         )
     }
 

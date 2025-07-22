@@ -8,4 +8,8 @@ interface LocalQuizDataSource {
     suspend fun getQuizzes(): Quizzes?
 
     suspend fun getQuiz(id: Int): QuizDetails?
+
+    suspend fun saveQuizzes(quizzes: Quizzes)
+
+    suspend fun saveQuiz(quiz: QuizDetails)
 }

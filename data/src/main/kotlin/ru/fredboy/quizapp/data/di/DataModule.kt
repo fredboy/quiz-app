@@ -13,6 +13,7 @@ val dataModule = module {
     single<QuizRepository> {
         QuizRepositoryImpl(
             remoteQuizDataSource = get(),
+            localQuizDataSource = get(),
             quizzesMapper = get(),
             quizDetailsMapper = get(),
         )
