@@ -1,7 +1,6 @@
 package ru.fredboy.quizapp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -10,20 +9,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
-import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
+import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.map
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.fredboy.quizapp.ui.compose.QuizListScreen
 import ru.fredboy.quizapp.ui.theme.QuizAppTheme
+import ru.fredboy.quizapp.view.quizlist.QuizListViewModel
 
 class MainActivity : ComponentActivity() {
 
-    val getQuizListUseCase: GetQuizListUseCase by inject()
-
-    val getQuizUseCase: GetQuizUseCase by inject()
+    val quizListViewModel: QuizListViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,41 +30,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             QuizAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding),
-                    )
+                    MainScreen(quizListViewModel)
                 }
             }
         }
+    }
+}
 
-        lifecycleScope.launch {
-            val quizzes = getQuizListUseCase.invoke()
-            Log.d("MainActivity", quizzes.quizzes.toString())
+@Composable
+fun MainScreen(viewModel: QuizListViewModel) {
+    val state by viewModel.quizzes.collectAsState()
 
-            quizzes.quizzes.forEach { quiz ->
-                val details = getQuizUseCase.invoke(quiz.id)
-                Log.d("MainActivity", details.toString())
-            }
+    QuizListScreen(
+        state = state,
+        onRetry = {  },
+        onQuizClick = { quizVo ->
+            viewModel.onQuizClick(quizVo)
         }
-    }
-}
-
-@Composable
-fun Greeting(
-    name: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    QuizAppTheme {
-        Greeting("Android")
-    }
 }
