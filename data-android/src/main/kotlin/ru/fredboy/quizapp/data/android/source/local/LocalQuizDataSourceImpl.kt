@@ -6,6 +6,7 @@ import ru.fredboy.quizapp.data.android.mapper.AnswerMapper
 import ru.fredboy.quizapp.data.android.mapper.QuestionMapper
 import ru.fredboy.quizapp.data.android.mapper.QuizMapper
 import ru.fredboy.quizapp.data.android.mapper.QuizzesMapper
+import ru.fredboy.quizapp.data.android.source.local.prefs.QuizCachePrefsDataStore
 import ru.fredboy.quizapp.data.android.source.local.room.QuizDao
 import ru.fredboy.quizapp.data.source.local.LocalQuizDataSource
 import ru.fredboy.quizapp.domain.model.QuizDetails
@@ -17,6 +18,7 @@ internal class LocalQuizDataSourceImpl(
     private val quizMapper: QuizMapper,
     private val questionMapper: QuestionMapper,
     private val answerMapper: AnswerMapper,
+    private val quizCachePrefsDataStore: QuizCachePrefsDataStore,
 ) : LocalQuizDataSource {
 
     override suspend fun getQuizzes(): Quizzes? {
@@ -25,8 +27,12 @@ internal class LocalQuizDataSourceImpl(
                 ?.takeIf { it.isNotEmpty() }
         } ?: return null
 
+        val cacheLastUpdate = withContext(Dispatchers.IO) {
+            quizCachePrefsDataStore.getLastUpdateTimestamp()
+        }
+
         return withContext(Dispatchers.Default) {
-            quizzesMapper.map(quizList)
+            quizzesMapper.map(quizList, cacheLastUpdate)
         }
     }
 
@@ -55,6 +61,7 @@ internal class LocalQuizDataSourceImpl(
 
         withContext(Dispatchers.IO) {
             quizDao.insertQuizzes(entities)
+            quizCachePrefsDataStore.setLastUpdateTimestamp(quizzes.timestamp)
         }
     }
 

@@ -19,7 +19,7 @@ internal class QuizzesMapper {
         }
     }
 
-    fun map(quizzes: List<QuizEntity>): Quizzes {
+    fun map(quizzes: List<QuizEntity>, lastUpdateTimestamp: Long): Quizzes {
         return Quizzes(
             quizzes = quizzes.map { quiz ->
                 Quiz(
@@ -31,8 +31,7 @@ internal class QuizzesMapper {
                     status = quiz.status,
                 )
             },
-            // TODO: Read from shared prefs
-            timestamp = System.currentTimeMillis(),
+            timestamp = lastUpdateTimestamp,
         )
     }
 }

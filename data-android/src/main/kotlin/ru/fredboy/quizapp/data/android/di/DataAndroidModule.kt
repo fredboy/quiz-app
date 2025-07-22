@@ -1,6 +1,10 @@
 package ru.fredboy.quizapp.data.android.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -14,12 +18,15 @@ import ru.fredboy.quizapp.data.android.mapper.QuestionMapper
 import ru.fredboy.quizapp.data.android.mapper.QuizMapper
 import ru.fredboy.quizapp.data.android.mapper.QuizzesMapper
 import ru.fredboy.quizapp.data.android.source.local.LocalQuizDataSourceImpl
+import ru.fredboy.quizapp.data.android.source.local.prefs.QuizCachePrefsDataStore
 import ru.fredboy.quizapp.data.android.source.local.room.QuizDao
 import ru.fredboy.quizapp.data.android.source.local.room.QuizDatabase
 import ru.fredboy.quizapp.data.android.source.remote.QuizApiService
 import ru.fredboy.quizapp.data.android.source.remote.RemoteQuizDataSourceImpl
 import ru.fredboy.quizapp.data.source.local.LocalQuizDataSource
 import ru.fredboy.quizapp.data.source.remote.RemoteQuizDataSource
+
+private const val PREFERENCES_DATA_STORE_FILE_NAME = "quiz-app-data-store"
 
 val dataAndroidModule = module {
 
@@ -65,6 +72,21 @@ val dataAndroidModule = module {
             quizMapper = get(),
             questionMapper = get(),
             answerMapper = get(),
+            quizCachePrefsDataStore = get(),
+        )
+    }
+
+    single<DataStore<Preferences>> {
+        val context = get<Context>()
+
+        PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile(PREFERENCES_DATA_STORE_FILE_NAME)
+        }
+    }
+
+    single<QuizCachePrefsDataStore> {
+        QuizCachePrefsDataStore(
+            dataStore = get(),
         )
     }
 
