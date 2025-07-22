@@ -23,8 +23,7 @@ internal class LocalQuizDataSourceImpl(
 
     override suspend fun getQuizzes(): Quizzes? {
         val quizList = withContext(Dispatchers.IO) {
-            quizDao.getAllQuizzes()
-                ?.takeIf { it.isNotEmpty() }
+            quizDao.getAllQuizzes().takeIf { it.isNotEmpty() }
         } ?: return null
 
         val cacheLastUpdate = withContext(Dispatchers.IO) {

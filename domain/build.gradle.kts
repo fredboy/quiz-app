@@ -17,4 +17,6 @@ dependencies {
     implementation(libs.koin)
 
     implementation(libs.kotlinx.coroutines.core)
+
+    implementation(libs.kermit)
 }

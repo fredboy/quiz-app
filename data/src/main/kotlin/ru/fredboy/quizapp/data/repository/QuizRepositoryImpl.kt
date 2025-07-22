@@ -1,5 +1,6 @@
 package ru.fredboy.quizapp.data.repository
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.fredboy.quizapp.data.mapper.QuizDetailsMapper
@@ -18,6 +19,8 @@ internal class QuizRepositoryImpl(
 ) : QuizRepository {
 
     override suspend fun getQuizzesFromServer(): Quizzes {
+        logger.i { "Requesting quiz list from server" }
+
         val quizzesDto = withContext(Dispatchers.IO) {
             remoteQuizDataSource.getQuizzes()
         }
@@ -30,6 +33,8 @@ internal class QuizRepositoryImpl(
     }
 
     override suspend fun getQuizFromServer(id: Int): QuizDetails {
+        logger.i { "Requesting quiz with id $id from server" }
+
         val quizDetailsDto = withContext(Dispatchers.IO) {
             remoteQuizDataSource.getQuiz(id)
         }
@@ -42,36 +47,54 @@ internal class QuizRepositoryImpl(
     }
 
     override suspend fun getQuizzesFromCache(): Quizzes? {
+        logger.d { "Attempting to read quiz list from cache" }
+
         val quizzes = withContext(Dispatchers.IO) {
             localQuizDataSource.getQuizzes()
         }
+
+        logger.d { quizzes?.let { "Cache hit (size ${quizzes.quizzes.size})" } ?: "Cache miss" }
 
         return quizzes
     }
 
     override suspend fun getQuizFromCache(id: Int): QuizDetails? {
+        logger.d { "Attempting to read quiz with id $id from cache" }
+
         val quiz = withContext(Dispatchers.IO) {
             localQuizDataSource.getQuiz(id)
         }
+
+        logger.d { quiz?.let { "Cache hit" } ?: "Cache miss" }
 
         return quiz
     }
 
     override suspend fun saveQuizzesToCache(quizzes: Quizzes) {
+        logger.d { "Saving quiz list (size ${quizzes.quizzes.size}) to cache" }
+
         withContext(Dispatchers.IO) {
             localQuizDataSource.saveQuizzes(quizzes)
         }
     }
 
     override suspend fun saveQuizToCache(quiz: QuizDetails) {
+        logger.d { "Saving quiz details with id ${quiz.id} to cache" }
+
         withContext(Dispatchers.IO) {
             localQuizDataSource.saveQuiz(quiz)
         }
     }
 
     override suspend fun clearCache() {
+        logger.d { "Clear local cache" }
+
         withContext(Dispatchers.IO) {
             localQuizDataSource.clear()
         }
+    }
+
+    companion object {
+        private val logger = Logger.withTag("QuizRepositoryImpl")
     }
 }

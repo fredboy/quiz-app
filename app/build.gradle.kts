@@ -58,6 +58,8 @@ dependencies {
 
     implementation(libs.bundles.coil)
 
+    implementation(libs.kermit)
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.androidTest)
 

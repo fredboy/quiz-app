@@ -44,13 +44,13 @@ internal interface QuizDao {
     // region Queries
 
     @Query("SELECT * FROM quizzes")
-    suspend fun getAllQuizzes(): List<QuizEntity>?
+    suspend fun getAllQuizzes(): List<QuizEntity>
 
     @Query("SELECT * FROM questions WHERE id = :questionId AND quiz_id = :quizId")
     suspend fun getQuestion(questionId: Int, quizId: Int): QuestionEntity?
 
     @Query("SELECT * FROM answers WHERE question_id = :questionId AND quiz_id = :quizId")
-    suspend fun getAnswers(questionId: Int, quizId: Int): List<AnswerEntity>?
+    suspend fun getAnswers(questionId: Int, quizId: Int): List<AnswerEntity>
 
     @Transaction
     @Query("SELECT * FROM quizzes WHERE id = :quizId")
@@ -59,7 +59,7 @@ internal interface QuizDao {
     @Transaction
     suspend fun getQuestionWithAnswers(questionId: Int, quizId: Int): QuestionWithAnswers? {
         val question = getQuestion(questionId, quizId) ?: return null
-        val answers = getAnswers(questionId, quizId) ?: return null
+        val answers = getAnswers(questionId, quizId).takeIf { it.isNotEmpty() } ?: return null
 
         return QuestionWithAnswers(
             question = question,
