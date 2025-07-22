@@ -1,7 +1,10 @@
 package ru.fredboy.quizapp.data.repository
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -18,6 +21,7 @@ import ru.fredboy.quizapp.domain.model.QuizDetails
 import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.data.model.QuizDetailsDto
 import ru.fredboy.quizapp.data.model.QuizzesDto
+import ru.fredboy.quizapp.domain.model.QuizStatus
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
@@ -108,6 +112,47 @@ class QuizRepositoryImplTest {
 
         verify(local).saveQuiz(quiz)
     }
+
+    @Test
+    fun `saveQuizStatusToCache calls localQuizDataSource saveQuizStatus`() = runTest {
+        val quizId = 1
+        val status = QuizStatus.UNTAKEN
+
+        repo.saveQuizStatusToCache(quizId, status)
+
+        verify(local).saveQuizStatus(quizId, status)
+    }
+
+    @Test
+    fun `getQuizStatusFromCache returns status from localQuizDataSource`() = runTest {
+        val quizId = 5
+        val expectedStatus = QuizStatus.PASSED
+
+        whenever(local.getQuizStatus(quizId)).thenReturn(expectedStatus)
+
+        val actualStatus = repo.getQuizStatusFromCache(quizId)
+
+        assertEquals(expectedStatus, actualStatus)
+        verify(local).getQuizStatus(quizId)
+    }
+
+    @Test
+    fun `observeQuizStatus returns flow from localQuizDataSource`() = runTest {
+        val quizId = 7
+        val expectedStatus = QuizStatus.FAILED
+
+        val flow = flowOf(expectedStatus)
+
+        whenever(local.getQuizStatusFlow(quizId)).thenReturn(flow)
+
+        val resultFlow = repo.observeQuizStatus(quizId)
+
+        val firstValue = resultFlow.first()
+
+        assertEquals(expectedStatus, firstValue)
+        verify(local).getQuizStatusFlow(quizId)
+    }
+
 
     @Test
     fun `clearCache calls local clear`() = runTest {

@@ -1,23 +1,27 @@
 package ru.fredboy.quizapp.data.android.source.local
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import ru.fredboy.quizapp.data.android.mapper.AnswerMapper
 import ru.fredboy.quizapp.data.android.mapper.QuestionMapper
 import ru.fredboy.quizapp.data.android.mapper.QuizMapper
+import ru.fredboy.quizapp.data.android.mapper.QuizStatusMapper
 import ru.fredboy.quizapp.data.android.mapper.QuizzesMapper
 import ru.fredboy.quizapp.data.android.model.AnswerEntity
 import ru.fredboy.quizapp.data.android.model.QuestionEntity
 import ru.fredboy.quizapp.data.android.model.QuizEntity
+import ru.fredboy.quizapp.data.android.model.QuizStatusEntity
 import ru.fredboy.quizapp.data.android.model.relation.QuestionWithAnswers
 import ru.fredboy.quizapp.data.android.model.relation.QuizWithQuestions
 import ru.fredboy.quizapp.data.android.source.local.prefs.QuizCachePrefsDataStore
@@ -25,6 +29,7 @@ import ru.fredboy.quizapp.data.android.source.local.room.QuizDao
 import ru.fredboy.quizapp.domain.model.Answer
 import ru.fredboy.quizapp.domain.model.Question
 import ru.fredboy.quizapp.domain.model.QuizDetails
+import ru.fredboy.quizapp.domain.model.QuizStatus
 import ru.fredboy.quizapp.domain.model.Quizzes
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -40,6 +45,7 @@ class LocalQuizDataSourceImplTest {
     private val quizMapper = mock<QuizMapper>()
     private val questionMapper = mock<QuestionMapper>()
     private val answerMapper = mock<AnswerMapper>()
+    private val quizStatusMapper = mock<QuizStatusMapper>()
     private val quizCachePrefsDataStore = mock<QuizCachePrefsDataStore>()
 
     @BeforeEach
@@ -50,6 +56,7 @@ class LocalQuizDataSourceImplTest {
             quizMapper = quizMapper,
             questionMapper = questionMapper,
             answerMapper = answerMapper,
+            quizStatusMapper = quizStatusMapper,
             quizCachePrefsDataStore = quizCachePrefsDataStore,
         )
     }
@@ -163,6 +170,51 @@ class LocalQuizDataSourceImplTest {
         verify(quizDao).updateQuiz(quizEntity)
         verify(quizDao).insertQuestions(listOf(questionEntity))
         verify(quizDao).insertAnswers(listOf(answerEntity))
+    }
+
+    @Test
+    fun `saveQuizStatus maps and inserts quiz status`() = runTest {
+        val quizId = 42
+        val status = mock<QuizStatus>()
+        val entity = mock<QuizStatusEntity>()
+
+        whenever(quizStatusMapper.map(quizId, status)).thenReturn(entity)
+
+        dataSource.saveQuizStatus(quizId, status)
+
+        verify(quizDao).insertStatus(entity)
+    }
+
+    @Test
+    fun `getQuizStatus returns mapped status if present`() = runTest {
+        val quizId = 99
+        val statusEntity = mock<QuizStatusEntity>()
+        val status = mock<QuizStatus>()
+
+        val flow = flowOf(statusEntity)
+
+        whenever(quizDao.observeStatus(quizId)).thenReturn(flow)
+        whenever(quizStatusMapper.map(statusEntity)).thenReturn(status)
+
+        val result = dataSource.getQuizStatus(quizId)
+
+        assertEquals(status, result)
+    }
+
+    @Test
+    fun `getQuizStatusFlow maps status entity to domain`() = runTest {
+        val quizId = 123
+        val statusEntity = mock<QuizStatusEntity>()
+        val status = mock<QuizStatus>()
+
+        val flow = flowOf(statusEntity)
+
+        whenever(quizDao.observeStatus(quizId)).thenReturn(flow)
+        whenever(quizStatusMapper.map(statusEntity)).thenReturn(status)
+
+        val result = dataSource.getQuizStatusFlow(quizId).first()
+
+        assertEquals(status, result)
     }
 
     @Test

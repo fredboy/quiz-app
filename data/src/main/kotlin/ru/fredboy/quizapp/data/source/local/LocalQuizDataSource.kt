@@ -1,6 +1,8 @@
 package ru.fredboy.quizapp.data.source.local
 
+import kotlinx.coroutines.flow.Flow
 import ru.fredboy.quizapp.domain.model.QuizDetails
+import ru.fredboy.quizapp.domain.model.QuizStatus
 import ru.fredboy.quizapp.domain.model.Quizzes
 
 interface LocalQuizDataSource {
@@ -12,6 +14,12 @@ interface LocalQuizDataSource {
     suspend fun saveQuizzes(quizzes: Quizzes)
 
     suspend fun saveQuiz(quiz: QuizDetails)
+
+    suspend fun saveQuizStatus(quizId: Int, status: QuizStatus)
+
+    suspend fun getQuizStatus(quizId: Int): QuizStatus?
+
+    fun getQuizStatusFlow(quizId: Int): Flow<QuizStatus?>
 
     suspend fun clear()
 }

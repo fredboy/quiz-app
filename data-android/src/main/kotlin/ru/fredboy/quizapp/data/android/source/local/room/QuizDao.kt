@@ -6,9 +6,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import ru.fredboy.quizapp.data.android.model.AnswerEntity
 import ru.fredboy.quizapp.data.android.model.QuestionEntity
 import ru.fredboy.quizapp.data.android.model.QuizEntity
+import ru.fredboy.quizapp.data.android.model.QuizStatusEntity
 import ru.fredboy.quizapp.data.android.model.relation.QuestionWithAnswers
 import ru.fredboy.quizapp.data.android.model.relation.QuizWithQuestions
 
@@ -39,6 +41,9 @@ internal interface QuizDao {
     @Query("DELETE FROM answers")
     suspend fun clearAnswers()
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStatus(status: QuizStatusEntity)
+
     // endregion
 
     // region Queries
@@ -67,9 +72,10 @@ internal interface QuizDao {
         )
     }
 
-    // endregion
+    @Query("SELECT * FROM quiz_status WHERE quiz_id = :quizId")
+    fun observeStatus(quizId: Int): Flow<QuizStatusEntity?>
 
-    // Optional: Update status
+    // endregion
 
     @Update
     suspend fun updateQuiz(quiz: QuizEntity)

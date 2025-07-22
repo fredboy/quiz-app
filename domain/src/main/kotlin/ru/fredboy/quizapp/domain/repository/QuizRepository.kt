@@ -1,6 +1,8 @@
 package ru.fredboy.quizapp.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.fredboy.quizapp.domain.model.QuizDetails
+import ru.fredboy.quizapp.domain.model.QuizStatus
 import ru.fredboy.quizapp.domain.model.Quizzes
 
 interface QuizRepository {
@@ -16,6 +18,12 @@ interface QuizRepository {
     suspend fun saveQuizToCache(quiz: QuizDetails)
 
     suspend fun saveQuizzesToCache(quizzes: Quizzes)
+
+    suspend fun saveQuizStatusToCache(quizId: Int, status: QuizStatus)
+
+    suspend fun getQuizStatusFromCache(quizId: Int): QuizStatus?
+
+    fun observeQuizStatus(quizId: Int): Flow<QuizStatus?>
 
     suspend fun clearCache()
 }

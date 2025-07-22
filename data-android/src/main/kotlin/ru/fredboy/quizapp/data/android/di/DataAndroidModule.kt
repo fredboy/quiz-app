@@ -16,6 +16,7 @@ import ru.fredboy.quizapp.data.android.BuildConfig
 import ru.fredboy.quizapp.data.android.mapper.AnswerMapper
 import ru.fredboy.quizapp.data.android.mapper.QuestionMapper
 import ru.fredboy.quizapp.data.android.mapper.QuizMapper
+import ru.fredboy.quizapp.data.android.mapper.QuizStatusMapper
 import ru.fredboy.quizapp.data.android.mapper.QuizzesMapper
 import ru.fredboy.quizapp.data.android.source.local.LocalQuizDataSourceImpl
 import ru.fredboy.quizapp.data.android.source.local.prefs.QuizCachePrefsDataStore
@@ -72,6 +73,7 @@ val dataAndroidModule = module {
             quizMapper = get(),
             questionMapper = get(),
             answerMapper = get(),
+            quizStatusMapper = get(),
             quizCachePrefsDataStore = get(),
         )
     }
@@ -108,5 +110,9 @@ val dataAndroidModule = module {
 
     factory<AnswerMapper> {
         AnswerMapper()
+    }
+
+    factory<QuizStatusMapper> {
+        QuizStatusMapper()
     }
 }

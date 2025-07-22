@@ -2,12 +2,14 @@ package ru.fredboy.quizapp.data.repository
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import ru.fredboy.quizapp.data.mapper.QuizDetailsMapper
 import ru.fredboy.quizapp.data.mapper.QuizzesMapper
 import ru.fredboy.quizapp.data.source.local.LocalQuizDataSource
 import ru.fredboy.quizapp.data.source.remote.RemoteQuizDataSource
 import ru.fredboy.quizapp.domain.model.QuizDetails
+import ru.fredboy.quizapp.domain.model.QuizStatus
 import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.domain.repository.QuizRepository
 
@@ -84,6 +86,26 @@ internal class QuizRepositoryImpl(
         withContext(Dispatchers.IO) {
             localQuizDataSource.saveQuiz(quiz)
         }
+    }
+
+    override suspend fun saveQuizStatusToCache(quizId: Int, status: QuizStatus) {
+        logger.d { "Saving quiz status (id: $quizId, status: ${status.name})" }
+
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.saveQuizStatus(quizId, status)
+        }
+    }
+
+    override suspend fun getQuizStatusFromCache(quizId: Int): QuizStatus? {
+        logger.d { "Loading quiz ($quizId) status from cache" }
+
+        return withContext(Dispatchers.IO) {
+            localQuizDataSource.getQuizStatus(quizId)
+        }
+    }
+
+    override fun observeQuizStatus(quizId: Int): Flow<QuizStatus?> {
+        return localQuizDataSource.getQuizStatusFlow(quizId)
     }
 
     override suspend fun clearCache() {
