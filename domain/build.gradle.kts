@@ -15,4 +15,6 @@ kotlin {
 dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin)
+
+    implementation(libs.kotlinx.coroutines.core)
 }

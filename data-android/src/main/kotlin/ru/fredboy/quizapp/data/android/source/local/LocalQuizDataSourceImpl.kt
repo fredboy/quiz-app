@@ -78,4 +78,8 @@ internal class LocalQuizDataSourceImpl(
         quizDao.insertQuestions(questionEntities)
         quizDao.insertAnswers(answerEntities)
     }
+
+    override suspend fun clear() {
+        quizDao.clearQuizzes()
+    }
 }

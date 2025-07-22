@@ -17,15 +17,7 @@ internal class QuizRepositoryImpl(
     private val quizDetailsMapper: QuizDetailsMapper,
 ) : QuizRepository {
 
-    override suspend fun getQuizzes(): Quizzes {
-        val localQuizzes = withContext(Dispatchers.IO) {
-            localQuizDataSource.getQuizzes()
-        }
-
-        if (localQuizzes != null) {
-            return localQuizzes
-        }
-
+    override suspend fun getQuizzesFromServer(): Quizzes {
         val quizzesDto = withContext(Dispatchers.IO) {
             remoteQuizDataSource.getQuizzes()
         }
@@ -34,22 +26,10 @@ internal class QuizRepositoryImpl(
             quizzesMapper.map(quizzesDto)
         }
 
-        withContext(Dispatchers.IO) {
-            localQuizDataSource.saveQuizzes(quizzes)
-        }
-
         return quizzes
     }
 
-    override suspend fun getQuiz(id: Int): QuizDetails {
-        val localQuiz = withContext(Dispatchers.IO) {
-            localQuizDataSource.getQuiz(id)
-        }
-
-        if (localQuiz != null) {
-            return localQuiz
-        }
-
+    override suspend fun getQuizFromServer(id: Int): QuizDetails {
         val quizDetailsDto = withContext(Dispatchers.IO) {
             remoteQuizDataSource.getQuiz(id)
         }
@@ -58,10 +38,40 @@ internal class QuizRepositoryImpl(
             quizDetailsMapper.map(quizDetailsDto)
         }
 
-        withContext(Dispatchers.IO) {
-            localQuizDataSource.saveQuiz(quiz)
+        return quiz
+    }
+
+    override suspend fun getQuizzesFromCache(): Quizzes? {
+        val quizzes = withContext(Dispatchers.IO) {
+            localQuizDataSource.getQuizzes()
+        }
+
+        return quizzes
+    }
+
+    override suspend fun getQuizFromCache(id: Int): QuizDetails? {
+        val quiz = withContext(Dispatchers.IO) {
+            localQuizDataSource.getQuiz(id)
         }
 
         return quiz
+    }
+
+    override suspend fun saveQuizzesToCache(quizzes: Quizzes) {
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.saveQuizzes(quizzes)
+        }
+    }
+
+    override suspend fun saveQuizToCache(quiz: QuizDetails) {
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.saveQuiz(quiz)
+        }
+    }
+
+    override suspend fun clearCache() {
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.clear()
+        }
     }
 }

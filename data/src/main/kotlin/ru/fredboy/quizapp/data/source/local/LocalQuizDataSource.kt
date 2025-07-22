@@ -12,4 +12,6 @@ interface LocalQuizDataSource {
     suspend fun saveQuizzes(quizzes: Quizzes)
 
     suspend fun saveQuiz(quiz: QuizDetails)
+
+    suspend fun clear()
 }
