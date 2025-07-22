@@ -13,7 +13,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import ru.fredboy.quizapp.domain.model.Quiz
-import ru.fredboy.quizapp.domain.model.QuizStatus
 import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.domain.repository.QuizRepository
 import kotlin.time.ExperimentalTime
@@ -106,7 +105,6 @@ class GetQuizListUseCaseTest {
                     id = 1,
                     title = "title 1",
                     imageUrl = "http://example.com/image_1.png",
-                    status = QuizStatus.UNTAKEN,
                     passingScore = 2,
                     numberOfQuestions = 4,
                 ),
@@ -114,7 +112,6 @@ class GetQuizListUseCaseTest {
                     id = 2,
                     title = "title 2",
                     imageUrl = "http://example.com/image_2.png",
-                    status = QuizStatus.PASSED,
                     passingScore = 2,
                     numberOfQuestions = 4,
                 )

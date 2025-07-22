@@ -14,7 +14,6 @@ internal class QuizzesMapper {
                 imageUrl = quiz.imageUrl,
                 passingScore = quiz.passingScore,
                 numberOfQuestions = quiz.numberOfQuestions,
-                status = quiz.status,
             )
         }
     }
@@ -28,7 +27,6 @@ internal class QuizzesMapper {
                     imageUrl = quiz.imageUrl,
                     passingScore = quiz.passingScore,
                     numberOfQuestions = quiz.numberOfQuestions,
-                    status = quiz.status,
                 )
             },
             timestamp = lastUpdateTimestamp,

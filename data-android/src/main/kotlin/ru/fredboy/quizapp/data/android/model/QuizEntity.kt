@@ -14,5 +14,4 @@ internal data class QuizEntity(
     @ColumnInfo(name = "image_url") val imageUrl: String,
     @ColumnInfo(name = "passing_score") val passingScore: Int,
     @ColumnInfo(name = "number_of_questions") val numberOfQuestions: Int,
-    @ColumnInfo(name = "status") val status: QuizStatus,
 )

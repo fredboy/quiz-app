@@ -15,7 +15,6 @@ internal class QuizzesMapper {
                 imageUrl = quizDto.imageUrl,
                 passingScore = quizDto.passingScore,
                 numberOfQuestions = quizDto.numberOfQuestions,
-                status = QuizStatus.UNTAKEN
             )
         }
 

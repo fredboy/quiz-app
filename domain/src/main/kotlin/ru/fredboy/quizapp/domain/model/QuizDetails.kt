@@ -6,5 +6,4 @@ data class QuizDetails(
     val imageUrl: String,
     val passingScore: Int,
     val questions: List<Question>,
-    val status: QuizStatus,
 )

@@ -16,7 +16,6 @@ internal class QuizMapper(
             imageUrl = quiz.imageUrl,
             passingScore = quiz.passingScore,
             numberOfQuestions = quiz.questions.size,
-            status = quiz.status,
         )
     }
 
@@ -30,7 +29,6 @@ internal class QuizMapper(
             imageUrl = quizWithQuestions.quiz.imageUrl,
             passingScore = quizWithQuestions.quiz.passingScore,
             questions = questionsWithAnswers.map { questionMapper.map(it) },
-            status = quizWithQuestions.quiz.status,
         )
     }
 }
