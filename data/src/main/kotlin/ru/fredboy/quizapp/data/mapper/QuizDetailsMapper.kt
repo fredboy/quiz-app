@@ -15,7 +15,6 @@ internal class QuizDetailsMapper(
             imageUrl = quizDetailsDto.imageUrl,
             passingScore = quizDetailsDto.passingScore,
             questions = quizDetailsDto.questions.map(questionMapper::map),
-            status = QuizStatus.UNTAKEN,
         )
     }
 }

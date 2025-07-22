@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class AnswerDto(
+data class AnswerDto(
     @SerialName("id") val id: Int,
     @SerialName("text") val text: String,
 )

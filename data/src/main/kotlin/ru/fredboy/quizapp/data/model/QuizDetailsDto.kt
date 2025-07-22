@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class QuizDetailsDto(
+data class QuizDetailsDto(
     @SerialName("id") val id: Int,
     @SerialName("title") val title: String,
     @SerialName("image_url") val imageUrl: String,

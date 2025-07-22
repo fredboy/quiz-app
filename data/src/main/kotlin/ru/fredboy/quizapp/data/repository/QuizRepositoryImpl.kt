@@ -1,37 +1,122 @@
 package ru.fredboy.quizapp.data.repository
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import ru.fredboy.quizapp.data.mapper.QuizDetailsMapper
-import ru.fredboy.quizapp.data.mapper.QuizListMapper
-import ru.fredboy.quizapp.data.source.remote.QuizDataSource
-import ru.fredboy.quizapp.domain.model.Quiz
+import ru.fredboy.quizapp.data.mapper.QuizzesMapper
+import ru.fredboy.quizapp.data.source.local.LocalQuizDataSource
+import ru.fredboy.quizapp.data.source.remote.RemoteQuizDataSource
 import ru.fredboy.quizapp.domain.model.QuizDetails
+import ru.fredboy.quizapp.domain.model.QuizStatus
+import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.domain.repository.QuizRepository
 
 internal class QuizRepositoryImpl(
-    private val quizDataSource: QuizDataSource,
-    private val quizListMapper: QuizListMapper,
+    private val remoteQuizDataSource: RemoteQuizDataSource,
+    private val localQuizDataSource: LocalQuizDataSource,
+    private val quizzesMapper: QuizzesMapper,
     private val quizDetailsMapper: QuizDetailsMapper,
 ) : QuizRepository {
 
-    override suspend fun getQuizzes(): List<Quiz> {
+    override suspend fun getQuizzesFromServer(): Quizzes {
+        logger.i { "Requesting quiz list from server" }
+
         val quizzesDto = withContext(Dispatchers.IO) {
-            quizDataSource.getQuizzes()
+            remoteQuizDataSource.getQuizzes()
         }
 
-        return withContext(Dispatchers.Default) {
-            quizListMapper.map(quizzesDto)
+        val quizzes = withContext(Dispatchers.Default) {
+            quizzesMapper.map(quizzesDto)
+        }
+
+        return quizzes
+    }
+
+    override suspend fun getQuizFromServer(id: Int): QuizDetails {
+        logger.i { "Requesting quiz with id $id from server" }
+
+        val quizDetailsDto = withContext(Dispatchers.IO) {
+            remoteQuizDataSource.getQuiz(id)
+        }
+
+        val quiz = withContext(Dispatchers.Default) {
+            quizDetailsMapper.map(quizDetailsDto)
+        }
+
+        return quiz
+    }
+
+    override suspend fun getQuizzesFromCache(): Quizzes? {
+        logger.d { "Attempting to read quiz list from cache" }
+
+        val quizzes = withContext(Dispatchers.IO) {
+            localQuizDataSource.getQuizzes()
+        }
+
+        logger.d { quizzes?.let { "Cache hit (size ${quizzes.quizzes.size})" } ?: "Cache miss" }
+
+        return quizzes
+    }
+
+    override suspend fun getQuizFromCache(id: Int): QuizDetails? {
+        logger.d { "Attempting to read quiz with id $id from cache" }
+
+        val quiz = withContext(Dispatchers.IO) {
+            localQuizDataSource.getQuiz(id)
+        }
+
+        logger.d { quiz?.let { "Cache hit" } ?: "Cache miss" }
+
+        return quiz
+    }
+
+    override suspend fun saveQuizzesToCache(quizzes: Quizzes) {
+        logger.d { "Saving quiz list (size ${quizzes.quizzes.size}) to cache" }
+
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.saveQuizzes(quizzes)
         }
     }
 
-    override suspend fun getQuiz(id: Int): QuizDetails {
-        val quizDetailsDto = withContext(Dispatchers.IO) {
-            quizDataSource.getQuiz(id)
-        }
+    override suspend fun saveQuizToCache(quiz: QuizDetails) {
+        logger.d { "Saving quiz details with id ${quiz.id} to cache" }
 
-        return withContext(Dispatchers.Default) {
-            quizDetailsMapper.map(quizDetailsDto)
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.saveQuiz(quiz)
         }
+    }
+
+    override suspend fun saveQuizStatusToCache(quizId: Int, status: QuizStatus) {
+        logger.d { "Saving quiz status (id: $quizId, status: ${status.name})" }
+
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.saveQuizStatus(quizId, status)
+        }
+    }
+
+    override suspend fun getQuizStatusFromCache(quizId: Int): QuizStatus? {
+        logger.d { "Loading quiz ($quizId) status from cache" }
+
+        return withContext(Dispatchers.IO) {
+            localQuizDataSource.getQuizStatus(quizId)
+        }
+    }
+
+    override fun observeQuizStatus(quizId: Int): Flow<QuizStatus?> {
+        return localQuizDataSource.getQuizStatusFlow(quizId)
+    }
+
+    override suspend fun clearCache() {
+        logger.d { "Clear local cache" }
+
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.clear()
+        }
+    }
+
+    companion object {
+        private val logger = Logger.withTag("QuizRepositoryImpl")
     }
 }
