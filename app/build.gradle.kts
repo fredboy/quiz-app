@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.android.junit5)
 }
 
 android {
@@ -60,11 +61,8 @@ dependencies {
 
     implementation(libs.kermit)
 
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.bundles.androidTest)
-
-    testImplementation(platform(libs.koin.bom))
-    testImplementation(libs.bundles.test)
-
-    debugImplementation(libs.bundles.debug)
+    testImplementation(libs.junit5.jupiter)
+    testImplementation(libs.mockito.junit.jupiter)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

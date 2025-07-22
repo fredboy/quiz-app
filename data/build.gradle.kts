@@ -13,6 +13,10 @@ kotlin {
     jvmToolchain(11)
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation(project(":domain"))
 
@@ -23,4 +27,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.kermit)
+
+    testImplementation(libs.junit5.jupiter)
+    testImplementation(libs.mockito.junit.jupiter)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
