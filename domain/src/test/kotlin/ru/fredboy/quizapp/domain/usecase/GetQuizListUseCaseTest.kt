@@ -15,6 +15,7 @@ import org.mockito.kotlin.verify
 import ru.fredboy.quizapp.domain.model.Quiz
 import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.domain.repository.QuizRepository
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -24,7 +25,7 @@ class GetQuizListUseCaseTest {
 
     @Test
     fun `returns cached quizzes when cache is fresh`() = runTest {
-        val freshTimestamp = System.currentTimeMillis()
+        val freshTimestamp = Clock.System.now().epochSeconds
         val quizzes = Quizzes(mockQuizList(), freshTimestamp)
         val serverQuizzes =
             Quizzes(mockQuizList().map { it.copy(id = it.id + 100) }, freshTimestamp)
@@ -44,8 +45,8 @@ class GetQuizListUseCaseTest {
 
     @Test
     fun `fetches from server when cache is stale`() = runTest {
-        val staleTimestamp = Instant.DISTANT_PAST.toEpochMilliseconds()
-        val freshTimestamp = System.currentTimeMillis()
+        val staleTimestamp = Instant.DISTANT_PAST.epochSeconds
+        val freshTimestamp = Clock.System.now().epochSeconds
         val cached = Quizzes(mockQuizList().take(1), staleTimestamp)
         val fromServer = Quizzes(mockQuizList(), freshTimestamp)
 
@@ -64,7 +65,7 @@ class GetQuizListUseCaseTest {
 
     @Test
     fun `fetches from server when cache is missing`() = runTest {
-        val freshTimestamp = System.currentTimeMillis()
+        val freshTimestamp = Clock.System.now().epochSeconds
         val fromServer = Quizzes(mockQuizList(), freshTimestamp)
 
         val repo = mock<QuizRepository> {
@@ -82,7 +83,7 @@ class GetQuizListUseCaseTest {
 
     @Test
     fun `does not crash if caching fails`() = runTest {
-        val freshTimestamp = System.currentTimeMillis()
+        val freshTimestamp = Clock.System.now().epochSeconds
         val fromServer = Quizzes(mockQuizList(), freshTimestamp)
 
         val repo = mock<QuizRepository> {

@@ -5,18 +5,31 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.kotlin.*
 import org.mockito.junit.jupiter.MockitoExtension
-import ru.fredboy.quizapp.data.android.mapper.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import ru.fredboy.quizapp.data.android.mapper.AnswerMapper
+import ru.fredboy.quizapp.data.android.mapper.QuestionMapper
+import ru.fredboy.quizapp.data.android.mapper.QuizMapper
+import ru.fredboy.quizapp.data.android.mapper.QuizzesMapper
 import ru.fredboy.quizapp.data.android.model.AnswerEntity
 import ru.fredboy.quizapp.data.android.model.QuestionEntity
 import ru.fredboy.quizapp.data.android.model.QuizEntity
 import ru.fredboy.quizapp.data.android.model.relation.QuestionWithAnswers
 import ru.fredboy.quizapp.data.android.model.relation.QuizWithQuestions
+import ru.fredboy.quizapp.data.android.source.local.prefs.QuizCachePrefsDataStore
 import ru.fredboy.quizapp.data.android.source.local.room.QuizDao
-import ru.fredboy.quizapp.domain.model.*
+import ru.fredboy.quizapp.domain.model.Answer
+import ru.fredboy.quizapp.domain.model.Question
+import ru.fredboy.quizapp.domain.model.QuizDetails
+import ru.fredboy.quizapp.domain.model.Quizzes
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalTime::class)
 @ExtendWith(MockitoExtension::class)
 class LocalQuizDataSourceImplTest {
 
@@ -27,15 +40,17 @@ class LocalQuizDataSourceImplTest {
     private val quizMapper = mock<QuizMapper>()
     private val questionMapper = mock<QuestionMapper>()
     private val answerMapper = mock<AnswerMapper>()
+    private val quizCachePrefsDataStore = mock<QuizCachePrefsDataStore>()
 
     @BeforeEach
     fun setup() {
         dataSource = LocalQuizDataSourceImpl(
-            quizDao,
-            quizzesMapper,
-            quizMapper,
-            questionMapper,
-            answerMapper
+            quizDao = quizDao,
+            quizzesMapper = quizzesMapper,
+            quizMapper = quizMapper,
+            questionMapper = questionMapper,
+            answerMapper = answerMapper,
+            quizCachePrefsDataStore = quizCachePrefsDataStore,
         )
     }
 
@@ -50,16 +65,18 @@ class LocalQuizDataSourceImplTest {
 
     @Test
     fun `getQuizzes maps quizzes if dao returns list`() = runTest {
+        val timestamp = Clock.System.now().epochSeconds
         val entities = listOf(mock<QuizEntity>())
         val quizzes = mock<Quizzes>()
 
         whenever(quizDao.getAllQuizzes()).thenReturn(entities)
-        whenever(quizzesMapper.map(entities)).thenReturn(quizzes)
+        whenever(quizzesMapper.map(entities, timestamp)).thenReturn(quizzes)
+        whenever(quizCachePrefsDataStore.getLastUpdateTimestamp()).thenReturn(timestamp)
 
         val result = dataSource.getQuizzes()
 
         assert(result === quizzes)
-        verify(quizzesMapper).map(entities)
+        verify(quizzesMapper).map(entities, timestamp)
     }
 
     @Test
