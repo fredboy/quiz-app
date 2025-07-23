@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">QuizApp</string>
+
+    <string name="quiz_status_untaken">Not Attempted</string>
+    <string name="quiz_status_passed">Passed</string>
+    <string name="quiz_status_failed">Failed</string>
+
+    <string name="quiz_questions_and_score">Questions: %1$s, Passing score: %2$s%%</string>
+
+    <string name="common_error_retry">Retry</string>
+    <string name="common_error_message_default">An error occurred</string>
 </resources>

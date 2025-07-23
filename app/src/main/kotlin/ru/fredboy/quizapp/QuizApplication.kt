@@ -7,6 +7,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import ru.fredboy.quizapp.data.android.di.dataAndroidModule
 import ru.fredboy.quizapp.data.di.dataModule
+import ru.fredboy.quizapp.di.applicationModule
 import ru.fredboy.quizapp.domain.di.domainModule
 
 class QuizApplication : Application() {
@@ -22,6 +23,7 @@ class QuizApplication : Application() {
                 dataAndroidModule,
                 dataModule,
                 domainModule,
+                applicationModule,
             )
         }
     }

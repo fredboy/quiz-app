@@ -1,71 +1,56 @@
 package ru.fredboy.quizapp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
-import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
-import ru.fredboy.quizapp.ui.theme.QuizAppTheme
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.fredboy.quizapp.presentation.common.component.CommonTopAppBar
+import ru.fredboy.quizapp.presentation.common.theme.QuizAppTheme
+import ru.fredboy.quizapp.presentation.quizlist.model.QuizListViewModel
+import ru.fredboy.quizapp.presentation.quizlist.ui.QuizListScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
 
-    val getQuizListUseCase: GetQuizListUseCase by inject()
-
-    val getQuizUseCase: GetQuizUseCase by inject()
+    val quizListViewModel: QuizListViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
+            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
             QuizAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding),
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    topBar = {
+                        CommonTopAppBar(
+                            scrollBehavior = scrollBehavior,
+                            title = stringResource(R.string.app_name),
+                        )
+                    },
+                    contentWindowInsets = WindowInsets.safeDrawing,
+                ) { contentPadding ->
+                    QuizListScreen(
+                        contentPadding = contentPadding,
+                        viewModel = quizListViewModel,
+                        modifier = Modifier
+                            .nestedScroll(scrollBehavior.nestedScrollConnection),
                     )
                 }
             }
         }
-
-        lifecycleScope.launch {
-            val quizzes = getQuizListUseCase.invoke()
-            Log.d("MainActivity", quizzes.quizzes.toString())
-
-            quizzes.quizzes.forEach { quiz ->
-                val details = getQuizUseCase.invoke(quiz.id)
-                Log.d("MainActivity", details.toString())
-            }
-        }
-    }
-}
-
-@Composable
-fun Greeting(
-    name: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    QuizAppTheme {
-        Greeting("Android")
     }
 }
