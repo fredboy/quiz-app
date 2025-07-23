@@ -4,6 +4,7 @@ import org.koin.dsl.module
 import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
 import ru.fredboy.quizapp.domain.usecase.GetQuizStatusUseCase
 import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
+import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
 import ru.fredboy.quizapp.domain.usecase.SaveQuizStatusUseCase
 
@@ -35,6 +36,12 @@ val domainModule = module {
 
     factory<ObserveQuizStatusUseCase> {
         ObserveQuizStatusUseCase(
+            quizRepository = get(),
+        )
+    }
+
+    factory<InvalidateCachedQuizzesUseCase> {
+        InvalidateCachedQuizzesUseCase(
             quizRepository = get(),
         )
     }

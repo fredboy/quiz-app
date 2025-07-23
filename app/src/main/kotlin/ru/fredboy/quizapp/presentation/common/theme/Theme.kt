@@ -1,4 +1,4 @@
-package ru.fredboy.quizapp.ui.theme
+package ru.fredboy.quizapp.presentation.common.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

@@ -1,0 +1,87 @@
+package ru.fredboy.quizapp.presentation.quizlist.model
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
+import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
+import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class QuizListViewModel(
+    private val savedStateHandle: SavedStateHandle,
+    private val getQuizListUseCase: GetQuizListUseCase,
+    private val observeQuizStatusUseCase: ObserveQuizStatusUseCase,
+    private val invalidateCachedQuizzesUseCase: InvalidateCachedQuizzesUseCase,
+) : ViewModel() {
+
+    private val reloadTrigger = MutableSharedFlow<QuizListReloadEvent>(replay = 0)
+
+    val quizListState: StateFlow<QuizListState> = reloadTrigger
+        .onStart { emit(QuizListReloadEvent.Reload) }
+        .map { event ->
+            when (event) {
+                QuizListReloadEvent.Reload -> QuizListState.Loading
+                is QuizListReloadEvent.Refresh -> QuizListState.Refreshing(event.backgroundState)
+            }
+        }
+        .flatMapLatest { state ->
+            flow {
+                emit(state)
+                val quizzesData = getQuizListUseCase()
+                val quizVoFlows = quizzesData.quizzes.map { quiz ->
+                    observeQuizStatusUseCase(quiz.id).map { status ->
+                        QuizVo(quiz, status)
+                    }
+                }
+
+                emitAll(
+                    combine(quizVoFlows) { quizArray ->
+                        QuizListState.Success(quizArray.toList()) as QuizListState
+                    }
+                )
+            }.catch { throwable ->
+                logger.e(throwable) { "Error loading quiz list" }
+                emit(QuizListState.Error(throwable))
+            }
+        }
+        .onEach { state ->
+            logger.d { "Flowing state: $state" }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(500L),
+            initialValue = QuizListState.Loading,
+        )
+
+    fun onQuizClick(quizVo: QuizVo) {
+
+    }
+
+    fun onReload(reloadEvent: QuizListReloadEvent) {
+        logger.d { "Reload triggered" }
+        viewModelScope.launch {
+            invalidateCachedQuizzesUseCase.invoke()
+            reloadTrigger.emit(reloadEvent)
+        }
+    }
+
+    companion object {
+        private val logger = Logger.Companion.withTag("QuizListViewModel")
+    }
+}

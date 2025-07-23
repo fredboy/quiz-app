@@ -2,7 +2,7 @@ package ru.fredboy.quizapp.di
 
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import ru.fredboy.quizapp.view.quizlist.QuizListViewModel
+import ru.fredboy.quizapp.presentation.quizlist.model.QuizListViewModel
 
 val applicationModule = module {
 
@@ -10,8 +10,8 @@ val applicationModule = module {
         QuizListViewModel(
             savedStateHandle = get(),
             getQuizListUseCase = get(),
-            saveQuizStatusUseCase = get(),
             observeQuizStatusUseCase = get(),
+            invalidateCachedQuizzesUseCase = get(),
         )
     }
 }
