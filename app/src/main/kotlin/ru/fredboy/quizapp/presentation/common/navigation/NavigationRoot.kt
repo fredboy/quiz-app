@@ -8,7 +8,6 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
@@ -28,7 +27,6 @@ fun NavigationRoot(
         entryDecorators = listOf(
             rememberSavedStateNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
-            rememberSceneSetupNavEntryDecorator(),
         ),
         entryProvider = { navKey ->
             when (navKey) {
