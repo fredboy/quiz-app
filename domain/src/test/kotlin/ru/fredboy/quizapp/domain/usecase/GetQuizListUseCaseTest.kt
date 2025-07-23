@@ -105,6 +105,7 @@ class GetQuizListUseCaseTest {
                 Quiz(
                     id = 1,
                     title = "title 1",
+                    description = "description 1",
                     imageUrl = "http://example.com/image_1.png",
                     passingScore = 2,
                     numberOfQuestions = 4,
@@ -112,6 +113,7 @@ class GetQuizListUseCaseTest {
                 Quiz(
                     id = 2,
                     title = "title 2",
+                    description = "description 2",
                     imageUrl = "http://example.com/image_2.png",
                     passingScore = 2,
                     numberOfQuestions = 4,

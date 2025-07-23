@@ -33,7 +33,7 @@ class QuizDetailsViewModelTest {
             getQuizUseCase = getQuizUseCase,
             observeQuizStatusUseCase = observeQuizStatusUseCase,
             invalidateCachedQuizUseCase = invalidateCachedQuizUseCase,
-            params = QuizDetailsViewModelParams(QUIZ_DETAILS_VO.quizDetails.id)
+            params = QuizDetailsViewModelParams(QUIZ_DETAILS_VO.quizDetails.id),
         )
     }
 
@@ -99,10 +99,10 @@ class QuizDetailsViewModelTest {
                 id = 1234,
                 title = "Quiz Title",
                 description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
-                        "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
-                        "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
-                        "Consequatur ut exercitationem ut beatae soluta officiis." +
-                        "Repellat et possimus doloremque molestiae.",
+                    "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                    "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                    "Consequatur ut exercitationem ut beatae soluta officiis." +
+                    "Repellat et possimus doloremque molestiae.",
                 imageUrl = "https://placehold.co/600x400.png",
                 passingScore = 2,
                 questions = listOf(
