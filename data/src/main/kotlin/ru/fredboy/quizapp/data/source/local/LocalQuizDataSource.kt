@@ -22,4 +22,6 @@ interface LocalQuizDataSource {
     fun getQuizStatusFlow(quizId: Int): Flow<QuizStatus?>
 
     suspend fun clear()
+
+    suspend fun clearQuiz(quizId: Int)
 }

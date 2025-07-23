@@ -35,6 +35,9 @@ internal interface QuizDao {
     @Query("DELETE FROM quizzes")
     suspend fun clearQuizzes()
 
+    @Query("DELETE FROM quizzes WHERE id = :quizId")
+    suspend fun clearQuiz(quizId: Int)
+
     @Query("DELETE FROM questions")
     suspend fun clearQuestions()
 

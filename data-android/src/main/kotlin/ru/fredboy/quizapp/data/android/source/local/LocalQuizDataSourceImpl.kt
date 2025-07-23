@@ -121,4 +121,8 @@ internal class LocalQuizDataSourceImpl(
     override suspend fun clear() {
         quizDao.clearQuizzes()
     }
+
+    override suspend fun clearQuiz(quizId: Int) {
+        quizDao.clearQuiz(quizId)
+    }
 }

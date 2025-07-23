@@ -26,4 +26,6 @@ interface QuizRepository {
     fun observeQuizStatus(quizId: Int): Flow<QuizStatus?>
 
     suspend fun clearCache()
+
+    suspend fun clearCachedQuiz(quizId: Int)
 }

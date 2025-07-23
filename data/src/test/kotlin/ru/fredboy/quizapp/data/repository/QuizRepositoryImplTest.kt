@@ -15,13 +15,13 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import ru.fredboy.quizapp.data.mapper.QuizDetailsMapper
 import ru.fredboy.quizapp.data.mapper.QuizzesMapper
+import ru.fredboy.quizapp.data.model.QuizDetailsDto
+import ru.fredboy.quizapp.data.model.QuizzesDto
 import ru.fredboy.quizapp.data.source.local.LocalQuizDataSource
 import ru.fredboy.quizapp.data.source.remote.RemoteQuizDataSource
 import ru.fredboy.quizapp.domain.model.QuizDetails
-import ru.fredboy.quizapp.domain.model.Quizzes
-import ru.fredboy.quizapp.data.model.QuizDetailsDto
-import ru.fredboy.quizapp.data.model.QuizzesDto
 import ru.fredboy.quizapp.domain.model.QuizStatus
+import ru.fredboy.quizapp.domain.model.Quizzes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
@@ -116,7 +116,7 @@ class QuizRepositoryImplTest {
     @Test
     fun `saveQuizStatusToCache calls localQuizDataSource saveQuizStatus`() = runTest {
         val quizId = 1
-        val status = QuizStatus.UNTAKEN
+        val status = QuizStatus.PASSED
 
         repo.saveQuizStatusToCache(quizId, status)
 
@@ -159,5 +159,12 @@ class QuizRepositoryImplTest {
         repo.clearCache()
 
         verify(local).clear()
+    }
+
+    @Test
+    fun `clears single quiz by id`() = runTest {
+        repo.clearCachedQuiz(123)
+
+        verify(local).clearQuiz(123)
     }
 }

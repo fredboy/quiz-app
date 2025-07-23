@@ -116,6 +116,14 @@ internal class QuizRepositoryImpl(
         }
     }
 
+    override suspend fun clearCachedQuiz(quizId: Int) {
+        logger.d { "Clear locally cached quiz with id  $quizId" }
+
+        withContext(Dispatchers.IO) {
+            localQuizDataSource.clearQuiz(quizId)
+        }
+    }
+
     companion object {
         private val logger = Logger.withTag("QuizRepositoryImpl")
     }

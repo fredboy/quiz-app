@@ -16,12 +16,14 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
+import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class QuizDetailsViewModel(
     private val getQuizUseCase: GetQuizUseCase,
     private val observeQuizStatusUseCase: ObserveQuizStatusUseCase,
+    private val invalidateCachedQuizUseCase: InvalidateCachedQuizUseCase,
     private val params: QuizDetailsViewModelParams,
 ) : ViewModel() {
 
@@ -40,6 +42,11 @@ class QuizDetailsViewModel(
                 }
 
                 emit(state)
+
+                if (event !is QuizDetailsReloadEvent.Initial) {
+                    logger.i { "Invalidating cached quiz (id ${params.quizId}) before reload" }
+                    invalidateCachedQuizUseCase(params.quizId)
+                }
 
                 val quizDetails = getQuizUseCase(params.quizId)
 

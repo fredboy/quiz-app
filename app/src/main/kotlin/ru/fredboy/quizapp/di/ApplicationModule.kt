@@ -20,6 +20,7 @@ val applicationModule = module {
         QuizDetailsViewModel(
             getQuizUseCase = get(),
             observeQuizStatusUseCase = get(),
+            invalidateCachedQuizUseCase = get(),
             params = parameters.get(),
         )
     }

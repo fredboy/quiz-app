@@ -1,5 +1,6 @@
 package ru.fredboy.quizapp.presentation.quizlist.model
 
+import androidx.navigation3.runtime.NavBackStack
 import app.cash.turbine.test
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -10,6 +11,8 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import ru.fredboy.quizapp.domain.model.Quiz
 import ru.fredboy.quizapp.domain.model.QuizStatus
@@ -17,6 +20,8 @@ import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
+import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
 
 class QuizListViewModelTest {
 
@@ -26,6 +31,8 @@ class QuizListViewModelTest {
 
     private val invalidateCachedQuizzesUseCase = mock<InvalidateCachedQuizzesUseCase>()
 
+    private val navBackStack = mock<NavBackStack>()
+
     private lateinit var viewModel: QuizListViewModel
 
     @BeforeEach
@@ -34,6 +41,7 @@ class QuizListViewModelTest {
             getQuizListUseCase = getQuizListUseCase,
             observeQuizStatusUseCase = observeQuizStatusUseCase,
             invalidateCachedQuizzesUseCase = invalidateCachedQuizzesUseCase,
+            navBackStack = navBackStack,
         )
     }
 
@@ -98,6 +106,16 @@ class QuizListViewModelTest {
         }
     }
 
+    @Test
+    fun `pushes quiz details nav key to back stack on click`() = runTest {
+        val quizVo = mockQuizVos().last()
+
+        viewModel.onQuizClick(quizVo)
+
+        verify(navBackStack, times(1))
+            .add(QuizDetailsNavKey(QuizDetailsViewModelParams(quizVo.quiz.id)))
+    }
+
     companion object {
 
         private fun mockQuizVos(): List<QuizVo> {
@@ -106,6 +124,11 @@ class QuizListViewModelTest {
                     quiz = Quiz(
                         id = 1,
                         title = "Quiz Title 1",
+                        description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
+                                "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                                "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                                "Consequatur ut exercitationem ut beatae soluta officiis." +
+                                "Repellat et possimus doloremque molestiae.",
                         imageUrl = "https://placehold.co/600x400.png",
                         passingScore = 12,
                         numberOfQuestions = 20,
@@ -116,6 +139,11 @@ class QuizListViewModelTest {
                     quiz = Quiz(
                         id = 2,
                         title = "Quiz Title 2",
+                        description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
+                                "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                                "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                                "Consequatur ut exercitationem ut beatae soluta officiis." +
+                                "Repellat et possimus doloremque molestiae.",
                         imageUrl = "https://placehold.co/600x400.png",
                         passingScore = 6,
                         numberOfQuestions = 10,
@@ -126,6 +154,11 @@ class QuizListViewModelTest {
                     quiz = Quiz(
                         id = 3,
                         title = "Quiz Title 3",
+                        description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
+                                "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                                "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                                "Consequatur ut exercitationem ut beatae soluta officiis." +
+                                "Repellat et possimus doloremque molestiae.",
                         imageUrl = "https://placehold.co/600x400.png",
                         passingScore = 38,
                         numberOfQuestions = 40,
