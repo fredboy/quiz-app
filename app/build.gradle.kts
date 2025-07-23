@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.material)
 
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
 

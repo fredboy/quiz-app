@@ -42,6 +42,11 @@ private fun PreviewQuizList() {
                 quiz = Quiz(
                     id = 1,
                     title = "Quiz Title 1",
+                    description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
+                            "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                            "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                            "Consequatur ut exercitationem ut beatae soluta officiis." +
+                            "Repellat et possimus doloremque molestiae.",
                     imageUrl = "https://placehold.co/600x400.png",
                     passingScore = 12,
                     numberOfQuestions = 20,
@@ -52,6 +57,11 @@ private fun PreviewQuizList() {
                 quiz = Quiz(
                     id = 2,
                     title = "Quiz Title 2",
+                    description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
+                            "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                            "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                            "Consequatur ut exercitationem ut beatae soluta officiis." +
+                            "Repellat et possimus doloremque molestiae.",
                     imageUrl = "https://placehold.co/600x400.png",
                     passingScore = 6,
                     numberOfQuestions = 10,
@@ -62,6 +72,11 @@ private fun PreviewQuizList() {
                 quiz = Quiz(
                     id = 3,
                     title = "Quiz Title 3",
+                    description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
+                            "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                            "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                            "Consequatur ut exercitationem ut beatae soluta officiis." +
+                            "Repellat et possimus doloremque molestiae.",
                     imageUrl = "https://placehold.co/600x400.png",
                     passingScore = 38,
                     numberOfQuestions = 40,

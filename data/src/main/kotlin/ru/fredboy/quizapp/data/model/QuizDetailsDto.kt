@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class QuizDetailsDto(
     @SerialName("id") val id: Int,
     @SerialName("title") val title: String,
+    @SerialName("description") val description: String,
     @SerialName("image_url") val imageUrl: String,
     @SerialName("passing_score") val passingScore: Int,
     @SerialName("questions") val questions: List<QuestionDto>,
