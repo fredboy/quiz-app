@@ -8,7 +8,6 @@ val applicationModule = module {
 
     viewModel<QuizListViewModel> {
         QuizListViewModel(
-            savedStateHandle = get(),
             getQuizListUseCase = get(),
             observeQuizStatusUseCase = get(),
             invalidateCachedQuizzesUseCase = get(),

@@ -1,6 +1,5 @@
 package ru.fredboy.quizapp.presentation.quizlist.model
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
@@ -24,7 +23,6 @@ import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class QuizListViewModel(
-    private val savedStateHandle: SavedStateHandle,
     private val getQuizListUseCase: GetQuizListUseCase,
     private val observeQuizStatusUseCase: ObserveQuizStatusUseCase,
     private val invalidateCachedQuizzesUseCase: InvalidateCachedQuizzesUseCase,
@@ -33,16 +31,23 @@ class QuizListViewModel(
     private val reloadTrigger = MutableSharedFlow<QuizListReloadEvent>(replay = 0)
 
     val quizListState: StateFlow<QuizListState> = reloadTrigger
-        .onStart { emit(QuizListReloadEvent.Reload) }
-        .map { event ->
-            when (event) {
-                QuizListReloadEvent.Reload -> QuizListState.Loading
-                is QuizListReloadEvent.Refresh -> QuizListState.Refreshing(event.backgroundState)
-            }
-        }
-        .flatMapLatest { state ->
+        .onStart { emit(QuizListReloadEvent.Initial) }
+        .flatMapLatest { event ->
             flow {
+                val state = when (event) {
+                    QuizListReloadEvent.Initial, QuizListReloadEvent.Reload ->
+                        QuizListState.Loading
+
+                    is QuizListReloadEvent.Refresh ->
+                        QuizListState.Refreshing(event.backgroundState)
+                }
+
                 emit(state)
+
+                if (event !is QuizListReloadEvent.Initial) {
+                    invalidateCachedQuizzesUseCase()
+                }
+
                 val quizzesData = getQuizListUseCase()
                 val quizVoFlows = quizzesData.quizzes.map { quiz ->
                     observeQuizStatusUseCase(quiz.id).map { status ->
@@ -76,7 +81,6 @@ class QuizListViewModel(
     fun onReload(reloadEvent: QuizListReloadEvent) {
         logger.d { "Reload triggered" }
         viewModelScope.launch {
-            invalidateCachedQuizzesUseCase.invoke()
             reloadTrigger.emit(reloadEvent)
         }
     }

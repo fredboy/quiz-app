@@ -87,6 +87,8 @@ fun QuizListScreen(
                 state = state.lastState,
                 onQuizClick = onQuizClick,
                 onRetry = onRetry,
+                modifier = modifier,
+                contentPadding = contentPadding,
             )
         }
     }
