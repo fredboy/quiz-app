@@ -72,4 +72,7 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+
+    testImplementation(platform(libs.koin.bom))
+    testImplementation(libs.koin.test)
 }
