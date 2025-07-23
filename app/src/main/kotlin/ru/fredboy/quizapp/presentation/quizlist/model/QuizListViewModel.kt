@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -45,6 +44,7 @@ class QuizListViewModel(
                 emit(state)
 
                 if (event !is QuizListReloadEvent.Initial) {
+                    logger.i { "Invalidating caches before reload" }
                     invalidateCachedQuizzesUseCase()
                 }
 
@@ -62,11 +62,8 @@ class QuizListViewModel(
                 )
             }.catch { throwable ->
                 logger.e(throwable) { "Error loading quiz list" }
-                emit(QuizListState.Error(throwable))
+                emit(QuizListState.Error(throwable.localizedMessage))
             }
-        }
-        .onEach { state ->
-            logger.d { "Flowing state: $state" }
         }
         .stateIn(
             scope = viewModelScope,

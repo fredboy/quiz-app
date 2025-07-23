@@ -67,8 +67,7 @@ fun QuizListScreen(
 
         is QuizListState.Error -> {
             CommonErrorBox(
-                message = state.throwable.localizedMessage
-                    ?: stringResource(R.string.common_error_message_default),
+                message = state.message ?: stringResource(R.string.common_error_message_default),
                 onRetry = onRetry,
             )
         }

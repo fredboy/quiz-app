@@ -5,7 +5,7 @@ sealed interface QuizListState {
     data object Loading: QuizListState
 
     data class Error(
-        val throwable: Throwable,
+        val message: String?,
     ): QuizListState
 
     data class Success(
