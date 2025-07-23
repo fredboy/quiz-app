@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                         contentPadding = contentPadding,
                         viewModel = quizListViewModel,
                         modifier = Modifier
-                            .nestedScroll(scrollBehavior.nestedScrollConnection)
+                            .nestedScroll(scrollBehavior.nestedScrollConnection),
                     )
                 }
             }

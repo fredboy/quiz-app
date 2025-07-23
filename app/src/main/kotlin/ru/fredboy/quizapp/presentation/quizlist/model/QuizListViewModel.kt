@@ -58,7 +58,7 @@ class QuizListViewModel(
                 emitAll(
                     combine(quizVoFlows) { quizArray ->
                         QuizListState.Success(quizArray.toList()) as QuizListState
-                    }
+                    },
                 )
             }.catch { throwable ->
                 logger.e(throwable) { "Error loading quiz list" }
@@ -72,7 +72,6 @@ class QuizListViewModel(
         )
 
     fun onQuizClick(quizVo: QuizVo) {
-
     }
 
     fun onReload(reloadEvent: QuizListReloadEvent) {

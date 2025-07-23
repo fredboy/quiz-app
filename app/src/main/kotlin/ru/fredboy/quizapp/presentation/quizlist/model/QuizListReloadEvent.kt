@@ -8,5 +8,5 @@ sealed interface QuizListReloadEvent {
 
     data class Refresh(
         val backgroundState: QuizListState,
-    ): QuizListReloadEvent
+    ) : QuizListReloadEvent
 }

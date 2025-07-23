@@ -51,7 +51,7 @@ class QuizListViewModelTest {
 
             assertEquals(
                 QuizListState.Success(mockQuizVos()),
-                awaitItem()
+                awaitItem(),
             )
 
             cancelAndIgnoreRemainingEvents()

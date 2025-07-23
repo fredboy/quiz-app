@@ -36,9 +36,9 @@ fun CommonTopAppBar(
                 Text(
                     text = title,
                     textAlign = TextAlign.Center,
-                    style= MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineMedium,
                 )
             }
-        }
+        },
     )
 }
