@@ -3,6 +3,7 @@ package ru.fredboy.quizapp.presentation.quizdetails.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsVo
 @Composable
 fun QuizPage(
     quizDetailsVo: QuizDetailsVo,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val quizDetails = quizDetailsVo.quizDetails
     val status = quizDetailsVo.status
@@ -39,15 +41,15 @@ fun QuizPage(
 
     Column(
         modifier = Modifier
+            .padding(contentPadding)
             .fillMaxSize(),
     ) {
         Image(
             painter = rememberAsyncImagePainter(quizDetails.imageUrl),
             contentDescription = null,
             modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(120.dp, 240.dp),
-            contentScale = ContentScale.Fit,
+                .fillMaxWidth(),
+            contentScale = ContentScale.FillWidth,
         )
 
         Spacer(

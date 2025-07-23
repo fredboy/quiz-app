@@ -2,6 +2,7 @@ package ru.fredboy.quizapp.presentation.quizdetails.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavBackStack
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +23,7 @@ import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
 class QuizDetailsViewModel(
     private val getQuizUseCase: GetQuizUseCase,
     private val observeQuizStatusUseCase: ObserveQuizStatusUseCase,
-    private val quizId: Int,
+    private val params: QuizDetailsViewModelParams,
 ) : ViewModel() {
 
     private val reloadTrigger = MutableSharedFlow<QuizDetailsReloadEvent>(replay = 0)
@@ -41,9 +42,9 @@ class QuizDetailsViewModel(
 
                 emit(state)
 
-                val quizDetails = getQuizUseCase(quizId)
+                val quizDetails = getQuizUseCase(params.quizId)
 
-                val successFlow = observeQuizStatusUseCase(quizId)
+                val successFlow = observeQuizStatusUseCase(params.quizId)
                     .map { status -> QuizDetailsVo(quizDetails, status) }
                     .map { quizDetailsVo ->
                         QuizDetailsState.Success(quizDetailsVo) as QuizDetailsState

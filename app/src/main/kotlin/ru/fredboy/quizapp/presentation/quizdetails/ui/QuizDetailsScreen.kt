@@ -3,6 +3,7 @@ package ru.fredboy.quizapp.presentation.quizdetails.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,13 +28,18 @@ fun QuizDetailsScreen(
 ) {
     val quizDetailsState by viewModel.quizDetailsState.collectAsStateWithLifecycle()
 
-    QuizDetailsScreen(
-        state = quizDetailsState,
-        onStartQuizClick = { },
-        onReload = { viewModel.onReload(QuizDetailsReloadEvent.Reload) },
-        modifier = modifier,
-        contentPadding = contentPadding,
-    )
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+    ) {
+        QuizDetailsScreen(
+            state = quizDetailsState,
+            onStartQuizClick = { },
+            onReload = { viewModel.onReload(QuizDetailsReloadEvent.Reload) },
+            modifier = modifier,
+            contentPadding = contentPadding,
+        )
+    }
 }
 
 @Composable
@@ -64,6 +70,7 @@ fun QuizDetailsScreen(
         is QuizDetailsState.Success -> {
             QuizPage(
                 quizDetailsVo = state.quizDetails,
+                contentPadding = contentPadding,
             )
         }
 
