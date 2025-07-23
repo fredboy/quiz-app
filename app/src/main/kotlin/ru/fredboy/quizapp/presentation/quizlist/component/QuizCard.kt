@@ -94,10 +94,10 @@ private fun PreviewQuizCard() {
                 id = 1,
                 title = "Quiz Title",
                 description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
-                        "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
-                        "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
-                        "Consequatur ut exercitationem ut beatae soluta officiis." +
-                        "Repellat et possimus doloremque molestiae.",
+                    "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                    "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                    "Consequatur ut exercitationem ut beatae soluta officiis." +
+                    "Repellat et possimus doloremque molestiae.",
                 imageUrl = "https://placehold.co/600x400.png",
                 passingScore = 6,
                 numberOfQuestions = 10,

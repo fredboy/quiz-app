@@ -1,7 +1,6 @@
 package ru.fredboy.quizapp.presentation.common.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -63,6 +62,6 @@ fun NavigationRoot(
 
                 else -> throw RuntimeException("Unknown NavKey: $navKey")
             }
-        }
+        },
     )
 }

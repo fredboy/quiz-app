@@ -80,8 +80,8 @@ class QuizListViewModel(
             element = QuizDetailsNavKey(
                 params = QuizDetailsViewModelParams(
                     quizId = quizVo.quiz.id,
-                )
-            )
+                ),
+            ),
         )
     }
 

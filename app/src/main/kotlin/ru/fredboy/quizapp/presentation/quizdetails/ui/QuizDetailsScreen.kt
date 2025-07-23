@@ -30,7 +30,7 @@ fun QuizDetailsScreen(
 
     Box(
         modifier = Modifier
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
     ) {
         QuizDetailsScreen(
             state = quizDetailsState,

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -90,7 +89,7 @@ fun QuizPage(
         Text(
             text = stringResource(
                 R.string.quiz_number_of_questions,
-                quizDetails.questions.size.toString()
+                quizDetails.questions.size.toString(),
             ),
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -104,7 +103,7 @@ fun QuizPage(
             text = stringResource(
                 R.string.quiz_passing_score_percent,
                 (quizDetails.passingScore.toFloat() / quizDetails.questions.size.toFloat() * 100f)
-                    .toInt().toString()
+                    .toInt().toString(),
             ),
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -138,10 +137,10 @@ private fun PreviewQuizPage() {
                 id = 1,
                 title = "Quiz Title",
                 description = "Pariatur quam vero est. Vel non sapiente quam tempora quisquam" +
-                        "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
-                        "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
-                        "Consequatur ut exercitationem ut beatae soluta officiis." +
-                        "Repellat et possimus doloremque molestiae.",
+                    "aliquid voluptas voluptas. Est quisquam reprehenderit consequatur." +
+                    "Quidem quo dolores laudantium praesentium aliquid harum rerum." +
+                    "Consequatur ut exercitationem ut beatae soluta officiis." +
+                    "Repellat et possimus doloremque molestiae.",
                 imageUrl = "https://placehold.co/600x400.png",
                 passingScore = 2,
                 questions = listOf(
@@ -169,6 +168,6 @@ private fun PreviewQuizPage() {
                 ),
             ),
             status = null,
-        )
+        ),
     )
 }
