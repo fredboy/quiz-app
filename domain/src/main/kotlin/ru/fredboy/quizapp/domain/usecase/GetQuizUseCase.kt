@@ -9,7 +9,12 @@ class GetQuizUseCase(
 ) {
 
     suspend operator fun invoke(id: Int): QuizDetails {
-        val cachedQuiz = quizRepository.getQuizFromCache(id)
+        val cachedQuiz = try {
+            quizRepository.getQuizFromCache(id)
+        } catch (e: Exception) {
+            logger.w(e) { "Exception when reading a quiz with id $id from cache" }
+            null
+        }
 
         return cachedQuiz ?: quizRepository.getQuizFromServer(id).also { quiz ->
             try {

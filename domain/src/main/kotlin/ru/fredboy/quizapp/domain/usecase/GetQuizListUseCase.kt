@@ -12,10 +12,15 @@ class GetQuizListUseCase(
 ) {
 
     suspend operator fun invoke(): Quizzes {
-        val cachedQuizzes = quizRepository.getQuizzesFromCache()
-            ?.takeIf { (_, timestamp) ->
-                Clock.System.now().epochSeconds - timestamp < QUIZ_CACHE_TTL_SEC
-            }
+        val cachedQuizzes = try {
+            quizRepository.getQuizzesFromCache()
+                ?.takeIf { (_, timestamp) ->
+                    Clock.System.now().epochSeconds - timestamp < QUIZ_CACHE_TTL_SEC
+                }
+        } catch (e: Exception) {
+            logger.w(e) { "Exception when reading quizzes from cache" }
+            null
+        }
 
         return cachedQuizzes ?: quizRepository.getQuizzesFromServer()
             .also { quizzes ->

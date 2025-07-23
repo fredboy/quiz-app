@@ -82,6 +82,24 @@ class GetQuizListUseCaseTest {
     }
 
     @Test
+    fun `fetches from server on cache error`() = runTest {
+        val freshTimestamp = Clock.System.now().epochSeconds
+        val fromServer = Quizzes(mockQuizList(), freshTimestamp)
+
+        val repo = mock<QuizRepository> {
+            onBlocking { getQuizzesFromCache() } doThrow RuntimeException("Cache exception")
+            onBlocking { getQuizzesFromServer() } doReturn fromServer
+        }
+
+        val useCase = GetQuizListUseCase(repo)
+
+        val result = useCase.invoke()
+
+        assertEquals(fromServer, result)
+        verify(repo).saveQuizzesToCache(fromServer)
+    }
+
+    @Test
     fun `does not crash if caching fails`() = runTest {
         val freshTimestamp = Clock.System.now().epochSeconds
         val fromServer = Quizzes(mockQuizList(), freshTimestamp)
