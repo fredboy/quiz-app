@@ -13,6 +13,7 @@ internal class QuizMapper(
         return QuizEntity(
             id = quiz.id,
             title = quiz.title,
+            description = quiz.description,
             imageUrl = quiz.imageUrl,
             passingScore = quiz.passingScore,
             numberOfQuestions = quiz.questions.size,
@@ -26,6 +27,7 @@ internal class QuizMapper(
         return QuizDetails(
             id = quizWithQuestions.quiz.id,
             title = quizWithQuestions.quiz.title,
+            description = quizWithQuestions.quiz.description,
             imageUrl = quizWithQuestions.quiz.imageUrl,
             passingScore = quizWithQuestions.quiz.passingScore,
             questions = questionsWithAnswers.map { questionMapper.map(it) },

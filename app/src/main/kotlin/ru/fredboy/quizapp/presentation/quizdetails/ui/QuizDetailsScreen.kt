@@ -1,12 +1,10 @@
-package ru.fredboy.quizapp.presentation.quizlist.ui
+package ru.fredboy.quizapp.presentation.quizdetails.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -16,31 +14,28 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.fredboy.quizapp.R
 import ru.fredboy.quizapp.presentation.common.component.CommonErrorBox
-import ru.fredboy.quizapp.presentation.quizlist.component.QuizList
-import ru.fredboy.quizapp.presentation.quizlist.model.QuizListReloadEvent
-import ru.fredboy.quizapp.presentation.quizlist.model.QuizListState
-import ru.fredboy.quizapp.presentation.quizlist.model.QuizListViewModel
-import ru.fredboy.quizapp.presentation.quizlist.model.QuizVo
+import ru.fredboy.quizapp.presentation.quizdetails.component.QuizPage
+import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsReloadEvent
+import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsState
+import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModel
+import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsVo
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun QuizListScreen(
+fun QuizDetailsScreen(
     contentPadding: PaddingValues,
-    viewModel: QuizListViewModel,
+    viewModel: QuizDetailsViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val state by viewModel.quizListState.collectAsStateWithLifecycle()
+    val quizDetailsState by viewModel.quizDetailsState.collectAsStateWithLifecycle()
 
-    PullToRefreshBox(
+    Box(
         modifier = Modifier
             .padding(horizontal = 16.dp),
-        isRefreshing = state is QuizListState.Refreshing,
-        onRefresh = { viewModel.onReload(QuizListReloadEvent.Refresh(state)) },
     ) {
-        QuizListScreen(
-            state = state,
-            onQuizClick = viewModel::onQuizClick,
-            onRetry = { viewModel.onReload(QuizListReloadEvent.Reload) },
+        QuizDetailsScreen(
+            state = quizDetailsState,
+            onStartQuizClick = { },
+            onReload = { viewModel.onReload(QuizDetailsReloadEvent.Reload) },
             modifier = modifier,
             contentPadding = contentPadding,
         )
@@ -48,15 +43,15 @@ fun QuizListScreen(
 }
 
 @Composable
-fun QuizListScreen(
-    state: QuizListState,
-    onQuizClick: (QuizVo) -> Unit,
-    onRetry: () -> Unit,
+fun QuizDetailsScreen(
+    state: QuizDetailsState,
+    onStartQuizClick: (QuizDetailsVo) -> Unit,
+    onReload: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     when (state) {
-        is QuizListState.Loading -> {
+        is QuizDetailsState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
@@ -65,27 +60,25 @@ fun QuizListScreen(
             }
         }
 
-        is QuizListState.Error -> {
+        is QuizDetailsState.Error -> {
             CommonErrorBox(
                 message = state.message ?: stringResource(R.string.common_error_message_default),
-                onRetry = onRetry,
+                onRetry = onReload,
             )
         }
 
-        is QuizListState.Success -> {
-            QuizList(
-                quizzes = state.quizzes,
-                onQuizClick = onQuizClick,
-                modifier = modifier,
+        is QuizDetailsState.Success -> {
+            QuizPage(
+                quizDetailsVo = state.quizDetails,
                 contentPadding = contentPadding,
             )
         }
 
-        is QuizListState.Refreshing -> {
-            QuizListScreen(
+        is QuizDetailsState.Refreshing -> {
+            QuizDetailsScreen(
                 state = state.lastState,
-                onQuizClick = onQuizClick,
-                onRetry = onRetry,
+                onStartQuizClick = onStartQuizClick,
+                onReload = onReload,
                 modifier = modifier,
                 contentPadding = contentPadding,
             )

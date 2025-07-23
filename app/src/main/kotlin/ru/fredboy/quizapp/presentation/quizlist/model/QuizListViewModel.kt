@@ -2,6 +2,7 @@ package ru.fredboy.quizapp.presentation.quizlist.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavBackStack
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,12 +20,15 @@ import kotlinx.coroutines.launch
 import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
+import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class QuizListViewModel(
     private val getQuizListUseCase: GetQuizListUseCase,
     private val observeQuizStatusUseCase: ObserveQuizStatusUseCase,
     private val invalidateCachedQuizzesUseCase: InvalidateCachedQuizzesUseCase,
+    private val navBackStack: NavBackStack,
 ) : ViewModel() {
 
     private val reloadTrigger = MutableSharedFlow<QuizListReloadEvent>(replay = 0)
@@ -72,6 +76,13 @@ class QuizListViewModel(
         )
 
     fun onQuizClick(quizVo: QuizVo) {
+        navBackStack.add(
+            element = QuizDetailsNavKey(
+                params = QuizDetailsViewModelParams(
+                    quizId = quizVo.quiz.id,
+                ),
+            ),
+        )
     }
 
     fun onReload(reloadEvent: QuizListReloadEvent) {

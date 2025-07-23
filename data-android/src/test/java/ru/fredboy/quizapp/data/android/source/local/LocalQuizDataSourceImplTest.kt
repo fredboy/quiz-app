@@ -223,4 +223,11 @@ class LocalQuizDataSourceImplTest {
 
         verify(quizDao).clearQuizzes()
     }
+
+    @Test
+    fun `clearQuiz deletes quiz by id`() = runTest {
+        dataSource.clearQuiz(123)
+
+        verify(quizDao).clearQuiz(123)
+    }
 }

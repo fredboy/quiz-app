@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.android.junit5)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -54,8 +55,13 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.material)
 
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
     implementation(libs.bundles.coil)
 
@@ -66,4 +72,7 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+
+    testImplementation(platform(libs.koin.bom))
+    testImplementation(libs.koin.test)
 }

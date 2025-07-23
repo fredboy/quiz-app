@@ -12,6 +12,7 @@ internal class QuizDetailsMapper(
         return QuizDetails(
             id = quizDetailsDto.id,
             title = quizDetailsDto.title,
+            description = quizDetailsDto.description,
             imageUrl = quizDetailsDto.imageUrl,
             passingScore = quizDetailsDto.passingScore,
             questions = quizDetailsDto.questions.map(questionMapper::map),

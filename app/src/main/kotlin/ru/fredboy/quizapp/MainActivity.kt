@@ -13,16 +13,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.fredboy.quizapp.presentation.common.component.CommonTopAppBar
+import ru.fredboy.quizapp.presentation.common.navigation.NavigationRoot
 import ru.fredboy.quizapp.presentation.common.theme.QuizAppTheme
-import ru.fredboy.quizapp.presentation.quizlist.model.QuizListViewModel
-import ru.fredboy.quizapp.presentation.quizlist.ui.QuizListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
-
-    val quizListViewModel: QuizListViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +39,8 @@ class MainActivity : ComponentActivity() {
                     },
                     contentWindowInsets = WindowInsets.safeDrawing,
                 ) { contentPadding ->
-                    QuizListScreen(
+                    NavigationRoot(
                         contentPadding = contentPadding,
-                        viewModel = quizListViewModel,
                         modifier = Modifier
                             .nestedScroll(scrollBehavior.nestedScrollConnection),
                     )

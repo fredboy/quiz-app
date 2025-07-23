@@ -11,6 +11,7 @@ internal class QuizzesMapper {
             QuizEntity(
                 id = quiz.id,
                 title = quiz.title,
+                description = quiz.description,
                 imageUrl = quiz.imageUrl,
                 passingScore = quiz.passingScore,
                 numberOfQuestions = quiz.numberOfQuestions,
@@ -24,6 +25,7 @@ internal class QuizzesMapper {
                 Quiz(
                     id = quiz.id,
                     title = quiz.title,
+                    description = quiz.description,
                     imageUrl = quiz.imageUrl,
                     passingScore = quiz.passingScore,
                     numberOfQuestions = quiz.numberOfQuestions,

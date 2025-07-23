@@ -12,6 +12,7 @@ internal class QuizzesMapper {
             Quiz(
                 id = quizDto.id,
                 title = quizDto.title,
+                description = quizDto.description,
                 imageUrl = quizDto.imageUrl,
                 passingScore = quizDto.passingScore,
                 numberOfQuestions = quizDto.numberOfQuestions,

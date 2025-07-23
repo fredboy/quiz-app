@@ -1,4 +1,4 @@
-package ru.fredboy.quizapp.presentation.quizlist.component
+package ru.fredboy.quizapp.presentation.common.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +17,7 @@ import ru.fredboy.quizapp.R
 import ru.fredboy.quizapp.domain.model.QuizStatus
 
 @Composable
-fun QuizStatusLabel(status: QuizStatus?) {
+fun CommonQuizStatusLabel(status: QuizStatus?) {
     val (label, color) = when (status) {
         QuizStatus.PASSED -> {
             stringResource(R.string.quiz_status_passed) to MaterialTheme.colorScheme.primary
@@ -51,23 +51,23 @@ fun QuizStatusLabel(status: QuizStatus?) {
 
 @Preview
 @Composable
-private fun QuizStatusLabelPreview() {
+private fun PreviewCommonQuizStatusLabel() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        QuizStatusLabel(
+        CommonQuizStatusLabel(
             status = null,
         )
         Spacer(
             modifier = Modifier.height(8.dp),
         )
-        QuizStatusLabel(
+        CommonQuizStatusLabel(
             status = QuizStatus.PASSED,
         )
         Spacer(
             modifier = Modifier.height(8.dp),
         )
-        QuizStatusLabel(
+        CommonQuizStatusLabel(
             status = QuizStatus.FAILED,
         )
     }
