@@ -115,14 +115,14 @@ class QuestionViewModelTest {
 
             viewModel.onAnswerSelected(2)
             awaitItem()
+        }
+
+        viewModel.navigationEventFlow.test {
             viewModel.onNextClicked()
+            val navigationEvent = awaitItem()
 
-            viewModel.navigationEventFlow.test {
-                val navigationEvent = awaitItem()
-
-                verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.PASSED)
-                assertEquals(NavigationEvent.PopBackStack, navigationEvent)
-            }
+            verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.PASSED)
+            assertEquals(NavigationEvent.PopBackStack, navigationEvent)
         }
     }
 
@@ -138,14 +138,13 @@ class QuestionViewModelTest {
 
             viewModel.onAnswerSelected(2)
             awaitItem()
-
+        }
+        viewModel.navigationEventFlow.test {
             viewModel.onNextClicked()
-            viewModel.navigationEventFlow.test {
-                val navigationEvent = awaitItem()
+            val navigationEvent = awaitItem()
 
-                verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.FAILED)
-                assertEquals(NavigationEvent.PopBackStack, navigationEvent)
-            }
+            verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.FAILED)
+            assertEquals(NavigationEvent.PopBackStack, navigationEvent)
         }
     }
 
