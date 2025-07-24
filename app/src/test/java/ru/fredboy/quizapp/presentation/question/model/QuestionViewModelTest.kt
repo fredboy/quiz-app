@@ -1,11 +1,8 @@
 package ru.fredboy.quizapp.presentation.question.model
 
-import androidx.navigation3.runtime.NavBackStack
 import app.cash.turbine.test
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.inOrder
@@ -20,6 +17,7 @@ import ru.fredboy.quizapp.domain.model.QuizStatus
 import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.SaveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
 import kotlin.test.assertEquals
 
 class QuestionViewModelTest {
@@ -27,8 +25,6 @@ class QuestionViewModelTest {
     private val getQuizUseCase = mock<GetQuizUseCase>()
     private val invalidateCachedQuizUseCase = mock<InvalidateCachedQuizUseCase>()
     private val saveQuizStatusUseCase = mock<SaveQuizStatusUseCase>()
-    private val navBackStack = mock<NavBackStack>()
-
     private lateinit var viewModel: QuestionViewModel
 
     private val quizId = 123
@@ -67,7 +63,6 @@ class QuestionViewModelTest {
             getQuizUseCase = getQuizUseCase,
             invalidateCachedQuizUseCase = invalidateCachedQuizUseCase,
             saveQuizStatusUseCase = saveQuizStatusUseCase,
-            navBackStack = navBackStack,
             params = QuestionViewModelParams(quizId),
         )
     }
@@ -87,14 +82,6 @@ class QuestionViewModelTest {
     @Test
     fun `emits error state on quiz load failure`() = runTest {
         whenever(getQuizUseCase.invoke(quizId)).doThrow(RuntimeException("API failure"))
-
-        viewModel = QuestionViewModel(
-            getQuizUseCase,
-            invalidateCachedQuizUseCase,
-            saveQuizStatusUseCase,
-            navBackStack,
-            QuestionViewModelParams(quizId),
-        )
 
         viewModel.questionState.test {
             assertEquals(QuestionState.Loading, awaitItem())
@@ -117,7 +104,6 @@ class QuestionViewModelTest {
     }
 
     @Test
-    @Disabled("flaky due to coroutine launch")
     fun `navigates to next question and calculates final result`() = runTest {
         viewModel.questionState.test {
             awaitItem()
@@ -130,14 +116,17 @@ class QuestionViewModelTest {
             viewModel.onAnswerSelected(2)
             awaitItem()
             viewModel.onNextClicked()
-        }
 
-        verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.PASSED)
-        verify(navBackStack).removeLastOrNull()
+            viewModel.navigationEventFlow.test {
+                val navigationEvent = awaitItem()
+
+                verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.PASSED)
+                assertEquals(NavigationEvent.PopBackStack, navigationEvent)
+            }
+        }
     }
 
     @Test
-    @Disabled("flaky due to coroutine launch")
     fun `calculates failed result if score below passing`() = runTest {
         viewModel.questionState.test {
             awaitItem()
@@ -149,12 +138,15 @@ class QuestionViewModelTest {
 
             viewModel.onAnswerSelected(2)
             awaitItem()
-            viewModel.onNextClicked()
-        }
 
-        advanceUntilIdle()
-        verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.FAILED)
-        verify(navBackStack).removeLastOrNull()
+            viewModel.onNextClicked()
+            viewModel.navigationEventFlow.test {
+                val navigationEvent = awaitItem()
+
+                verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.FAILED)
+                assertEquals(NavigationEvent.PopBackStack, navigationEvent)
+            }
+        }
     }
 
     @Test

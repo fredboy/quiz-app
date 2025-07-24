@@ -19,6 +19,7 @@ import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
 import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
 
@@ -106,10 +107,20 @@ class QuizListViewModelTest {
     fun `pushes quiz details nav key to back stack on click`() = runTest {
         val quizVo = mockQuizVos().last()
 
-        viewModel.onQuizClick(quizVo)
+        viewModel.navigationEventFlow.test {
+            viewModel.onQuizClick(quizVo)
 
-        verify(navBackStack, times(1))
-            .add(QuizDetailsNavKey(QuizDetailsViewModelParams(quizVo.quiz.id)))
+            val navigationEvent = awaitItem()
+
+            assertEquals(
+                NavigationEvent.PushToBackStack(
+                    QuizDetailsNavKey(
+                        QuizDetailsViewModelParams(quizVo.quiz.id),
+                    ),
+                ),
+                navigationEvent,
+            )
+        }
     }
 
     companion object {
