@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.koin.test.verify.verify
 import ru.fredboy.quizapp.presentation.question.model.QuestionViewModelParams
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
+import ru.fredboy.quizapp.presentation.quizresult.model.QuizResultViewModelParams
 
 class KoinGraphTest {
 
@@ -13,6 +14,7 @@ class KoinGraphTest {
             extraTypes = listOf(
                 QuizDetailsViewModelParams::class,
                 QuestionViewModelParams::class,
+                QuizResultViewModelParams::class,
             ),
         )
     }

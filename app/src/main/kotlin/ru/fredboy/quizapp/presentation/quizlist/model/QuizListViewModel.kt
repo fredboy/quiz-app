@@ -19,7 +19,7 @@ import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
 import ru.fredboy.quizapp.presentation.common.model.BaseViewModel
-import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
+import ru.fredboy.quizapp.presentation.common.navigation.NavBackStackEvent
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
 import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
 
@@ -80,17 +80,15 @@ class QuizListViewModel(
         )
 
     fun onQuizClick(quizVo: QuizVo) {
-        viewModelScope.launch {
-            _navigationEventFlow.emit(
-                NavigationEvent.PushToBackStack(
-                    QuizDetailsNavKey(
-                        params = QuizDetailsViewModelParams(
-                            quizId = quizVo.quiz.id,
-                        ),
+        emitNavBackStackEvent(
+            event = NavBackStackEvent.Push(
+                navKey = QuizDetailsNavKey(
+                    params = QuizDetailsViewModelParams(
+                        quizId = quizVo.quiz.id,
                     ),
                 ),
-            )
-        }
+            ),
+        )
     }
 
     fun onReload(reloadEvent: QuizListReloadEvent) {

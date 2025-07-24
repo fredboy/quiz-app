@@ -67,6 +67,8 @@ dependencies {
 
     implementation(libs.kermit)
 
+    implementation(libs.konfetti.compose)
+
     testImplementation(libs.junit5.jupiter)
     testImplementation(libs.mockito.junit.jupiter)
     testImplementation(libs.mockito.kotlin)

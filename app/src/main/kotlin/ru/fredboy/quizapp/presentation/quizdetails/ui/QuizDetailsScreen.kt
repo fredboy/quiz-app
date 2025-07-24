@@ -19,7 +19,7 @@ import androidx.navigation3.runtime.NavBackStack
 import ru.fredboy.quizapp.R
 import ru.fredboy.quizapp.presentation.common.component.CommonErrorBox
 import ru.fredboy.quizapp.presentation.common.component.CommonScaffold
-import ru.fredboy.quizapp.presentation.common.navigation.ListenNavigationEvents
+import ru.fredboy.quizapp.presentation.common.navigation.ListenNavBackStackEvent
 import ru.fredboy.quizapp.presentation.quizdetails.component.QuizPage
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsReloadEvent
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsState
@@ -34,7 +34,7 @@ fun QuizDetailsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val quizDetailsState by viewModel.quizDetailsState.collectAsStateWithLifecycle()
 
-    ListenNavigationEvents(viewModel, navBackStack)
+    ListenNavBackStackEvent(viewModel, navBackStack)
 
     CommonScaffold(
         scrollBehavior = scrollBehavior,

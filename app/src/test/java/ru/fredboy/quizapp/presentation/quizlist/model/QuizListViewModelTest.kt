@@ -10,8 +10,6 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import ru.fredboy.quizapp.domain.model.Quiz
 import ru.fredboy.quizapp.domain.model.QuizStatus
@@ -19,7 +17,7 @@ import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
-import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
+import ru.fredboy.quizapp.presentation.common.navigation.NavBackStackEvent
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
 import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
 
@@ -107,13 +105,13 @@ class QuizListViewModelTest {
     fun `pushes quiz details nav key to back stack on click`() = runTest {
         val quizVo = mockQuizVos().last()
 
-        viewModel.navigationEventFlow.test {
+        viewModel.navBackStackEventFlow.test {
             viewModel.onQuizClick(quizVo)
 
             val navigationEvent = awaitItem()
 
             assertEquals(
-                NavigationEvent.PushToBackStack(
+                NavBackStackEvent.Push(
                     QuizDetailsNavKey(
                         QuizDetailsViewModelParams(quizVo.quiz.id),
                     ),

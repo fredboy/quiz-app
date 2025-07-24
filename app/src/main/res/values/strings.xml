@@ -13,6 +13,11 @@
     <string name="quiz_question_number">Question %1$d of %2$d</string>
     <string name="quiz_next">Next</string>
     <string name="quiz_finish">Finish</string>
+    <string name="quiz_passed_emoji">✅</string>
+    <string name="quiz_failed_emoji">❌</string>
+    <string name="quiz_result_answers">You answered %1$s out of %2$s</string>
+    <string name="quiz_passed_text">You passed the quiz! 🎉</string>
+    <string name="quiz_failed_text">You did not pass. Try again. 💪</string>
 
     <string name="common_error_retry">Retry</string>
     <string name="common_error_message_default">An error occurred</string>
