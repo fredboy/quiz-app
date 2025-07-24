@@ -6,9 +6,6 @@ on:
       - main
       - develop
   pull_request:
-    branches:
-      - main
-      - develop
 
 jobs:
   build:
@@ -45,7 +42,7 @@ jobs:
         run: ./gradlew ktlintCheck
 
       - name: Build
-        run: ./gradlew clean build test
+        run: ./gradlew clean buildDebug
 
       - name: Unit Tests
         run: ./gradlew test
