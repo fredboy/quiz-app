@@ -1,13 +1,10 @@
 package ru.fredboy.quizapp.presentation.quizlist.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 import ru.fredboy.quizapp.presentation.common.navigation.QuizAppNavKey
 import ru.fredboy.quizapp.presentation.quizlist.ui.QuizListScreen
 
@@ -15,17 +12,12 @@ import ru.fredboy.quizapp.presentation.quizlist.ui.QuizListScreen
 data object QuizListNavKey : QuizAppNavKey {
 
     override fun getNavEntry(
-        scaffoldContentPadding: PaddingValues,
-        modifier: Modifier,
         navBackStack: NavBackStack,
     ): NavEntry<NavKey> {
         return NavEntry(this) {
             QuizListScreen(
-                contentPadding = scaffoldContentPadding,
-                viewModel = koinViewModel {
-                    parametersOf(navBackStack)
-                },
-                modifier = modifier,
+                viewModel = koinViewModel(),
+                navBackStack = navBackStack,
             )
         }
     }

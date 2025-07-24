@@ -44,6 +44,7 @@ fun QuizPage(
 
     Column(
         modifier = modifier
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(contentPadding)
             .fillMaxSize(),

@@ -5,39 +5,53 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavBackStack
 import ru.fredboy.quizapp.R
 import ru.fredboy.quizapp.presentation.common.component.CommonErrorBox
+import ru.fredboy.quizapp.presentation.common.component.CommonScaffold
+import ru.fredboy.quizapp.presentation.common.navigation.ListenNavigationEvents
 import ru.fredboy.quizapp.presentation.question.component.QuestionPage
 import ru.fredboy.quizapp.presentation.question.model.QuestionState
 import ru.fredboy.quizapp.presentation.question.model.QuestionViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestionScreen(
-    contentPadding: PaddingValues,
     viewModel: QuestionViewModel,
-    modifier: Modifier = Modifier,
+    navBackStack: NavBackStack,
 ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val questionState by viewModel.questionState.collectAsStateWithLifecycle()
 
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 16.dp),
-    ) {
-        QuestionScreen(
-            state = questionState,
-            onAnswerSelected = viewModel::onAnswerSelected,
-            onNext = viewModel::onNextClicked,
-            onReload = viewModel::onReload,
-            modifier = modifier,
-            contentPadding = contentPadding,
-        )
+    ListenNavigationEvents(viewModel, navBackStack)
+
+    CommonScaffold(
+        scrollBehavior = scrollBehavior,
+    ) { contentPadding ->
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp),
+        ) {
+            QuestionScreen(
+                state = questionState,
+                onAnswerSelected = viewModel::onAnswerSelected,
+                onNext = viewModel::onNextClicked,
+                onReload = viewModel::onReload,
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                contentPadding = contentPadding,
+            )
+        }
     }
 }
 

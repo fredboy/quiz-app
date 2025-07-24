@@ -11,7 +11,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
@@ -23,9 +22,9 @@ fun CommonTopAppBar(
     TopAppBar(
         scrollBehavior = scrollBehavior,
         colors = topAppBarColors(
-            containerColor = Color.Transparent,
+            containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = MaterialTheme.colorScheme.primary,
-            scrolledContainerColor = Color.Transparent,
+            scrolledContainerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
         ),
         title = {
             Box(

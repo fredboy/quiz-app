@@ -1,7 +1,5 @@
 package ru.fredboy.quizapp.presentation.question.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -18,17 +16,14 @@ data class QuestionNavKey(
 ) : QuizAppNavKey {
 
     override fun getNavEntry(
-        scaffoldContentPadding: PaddingValues,
-        modifier: Modifier,
         navBackStack: NavBackStack,
     ): NavEntry<NavKey> {
         return NavEntry(this) {
             QuestionScreen(
-                contentPadding = scaffoldContentPadding,
                 viewModel = koinViewModel {
-                    parametersOf(navBackStack, params)
+                    parametersOf(params)
                 },
-                modifier = modifier,
+                navBackStack = navBackStack,
             )
         }
     }

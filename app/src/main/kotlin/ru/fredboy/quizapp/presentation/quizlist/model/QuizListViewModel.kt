@@ -1,8 +1,6 @@
 package ru.fredboy.quizapp.presentation.quizlist.model
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation3.runtime.NavBackStack
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,6 +18,8 @@ import kotlinx.coroutines.launch
 import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.common.model.BaseViewModel
+import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
 import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
 
@@ -28,18 +28,20 @@ class QuizListViewModel(
     private val getQuizListUseCase: GetQuizListUseCase,
     private val observeQuizStatusUseCase: ObserveQuizStatusUseCase,
     private val invalidateCachedQuizzesUseCase: InvalidateCachedQuizzesUseCase,
-    private val navBackStack: NavBackStack,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val reloadTrigger = MutableSharedFlow<QuizListReloadEvent>(replay = 0)
 
+    private var lastSuccessState: QuizListState.Success? = null
+
     val quizListState: StateFlow<QuizListState> = reloadTrigger
-        .onStart { emit(QuizListReloadEvent.Initial) }
+        .onStart { emit(QuizListReloadEvent.Initial(lastSuccessState)) }
         .flatMapLatest { event ->
             flow {
                 val state = when (event) {
-                    QuizListReloadEvent.Initial, QuizListReloadEvent.Reload ->
-                        QuizListState.Loading
+                    is QuizListReloadEvent.Initial -> lastSuccessState ?: QuizListState.Loading
+
+                    QuizListReloadEvent.Reload -> QuizListState.Loading
 
                     is QuizListReloadEvent.Refresh ->
                         QuizListState.Refreshing(event.backgroundState)
@@ -61,7 +63,9 @@ class QuizListViewModel(
 
                 emitAll(
                     combine(quizVoFlows) { quizArray ->
-                        QuizListState.Success(quizArray.toList()) as QuizListState
+                        val success = QuizListState.Success(quizArray.toList())
+                        lastSuccessState = success
+                        success
                     },
                 )
             }.catch { throwable ->
@@ -76,13 +80,17 @@ class QuizListViewModel(
         )
 
     fun onQuizClick(quizVo: QuizVo) {
-        navBackStack.add(
-            element = QuizDetailsNavKey(
-                params = QuizDetailsViewModelParams(
-                    quizId = quizVo.quiz.id,
+        viewModelScope.launch {
+            _navigationEventFlow.emit(
+                NavigationEvent.PushToBackStack(
+                    QuizDetailsNavKey(
+                        params = QuizDetailsViewModelParams(
+                            quizId = quizVo.quiz.id,
+                        ),
+                    ),
                 ),
-            ),
-        )
+            )
+        }
     }
 
     fun onReload(reloadEvent: QuizListReloadEvent) {

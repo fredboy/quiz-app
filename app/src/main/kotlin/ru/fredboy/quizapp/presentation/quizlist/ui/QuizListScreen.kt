@@ -6,16 +6,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavBackStack
 import ru.fredboy.quizapp.R
 import ru.fredboy.quizapp.presentation.common.component.CommonErrorBox
+import ru.fredboy.quizapp.presentation.common.component.CommonScaffold
+import ru.fredboy.quizapp.presentation.common.navigation.ListenNavigationEvents
 import ru.fredboy.quizapp.presentation.quizlist.component.QuizList
 import ru.fredboy.quizapp.presentation.quizlist.model.QuizListReloadEvent
 import ru.fredboy.quizapp.presentation.quizlist.model.QuizListState
@@ -25,11 +30,13 @@ import ru.fredboy.quizapp.presentation.quizlist.model.QuizVo
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun QuizListScreen(
-    contentPadding: PaddingValues,
     viewModel: QuizListViewModel,
-    modifier: Modifier = Modifier,
+    navBackStack: NavBackStack,
 ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val state by viewModel.quizListState.collectAsStateWithLifecycle()
+
+    ListenNavigationEvents(viewModel, navBackStack)
 
     PullToRefreshBox(
         modifier = Modifier
@@ -37,13 +44,18 @@ fun QuizListScreen(
         isRefreshing = state is QuizListState.Refreshing,
         onRefresh = { viewModel.onReload(QuizListReloadEvent.Refresh(state)) },
     ) {
-        QuizListScreen(
-            state = state,
-            onQuizClick = viewModel::onQuizClick,
-            onRetry = { viewModel.onReload(QuizListReloadEvent.Reload) },
-            modifier = modifier,
-            contentPadding = contentPadding,
-        )
+        CommonScaffold(
+            scrollBehavior = scrollBehavior,
+        ) { contentPadding ->
+            QuizListScreen(
+                state = state,
+                onQuizClick = viewModel::onQuizClick,
+                onRetry = { viewModel.onReload(QuizListReloadEvent.Reload) },
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                contentPadding = contentPadding,
+            )
+        }
     }
 }
 

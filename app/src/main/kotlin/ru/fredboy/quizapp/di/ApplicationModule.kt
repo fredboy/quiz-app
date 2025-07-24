@@ -22,7 +22,6 @@ val applicationModule = module {
             getQuizListUseCase = get(),
             observeQuizStatusUseCase = get(),
             invalidateCachedQuizzesUseCase = get(),
-            navBackStack = get(),
         )
     }
 
@@ -31,7 +30,6 @@ val applicationModule = module {
             getQuizUseCase = get(),
             observeQuizStatusUseCase = get(),
             invalidateCachedQuizUseCase = get(),
-            navBackStack = get(),
             params = get(),
         )
     }
@@ -41,7 +39,6 @@ val applicationModule = module {
             getQuizUseCase = get(),
             invalidateCachedQuizUseCase = get(),
             saveQuizStatusUseCase = get(),
-            navBackStack = get(),
             params = get(),
         )
     }

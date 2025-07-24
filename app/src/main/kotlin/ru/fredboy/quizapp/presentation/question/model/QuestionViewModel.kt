@@ -1,8 +1,6 @@
 package ru.fredboy.quizapp.presentation.question.model
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation3.runtime.NavBackStack
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,15 +18,16 @@ import ru.fredboy.quizapp.domain.model.QuizStatus
 import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.SaveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.common.model.BaseViewModel
+import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class QuestionViewModel(
     private val getQuizUseCase: GetQuizUseCase,
     private val invalidateCachedQuizUseCase: InvalidateCachedQuizUseCase,
     private val saveQuizStatusUseCase: SaveQuizStatusUseCase,
-    private val navBackStack: NavBackStack,
     private val params: QuestionViewModelParams,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val reloadTrigger = MutableSharedFlow<QuestionReloadEvent>(replay = 0)
 
@@ -104,7 +103,8 @@ class QuestionViewModel(
                         QuizStatus.FAILED
                     },
                 )
-                navBackStack.removeLastOrNull()
+
+                _navigationEventFlow.emit(NavigationEvent.PopBackStack)
             } else {
                 questionIndexFlow.emit(nextIndex)
                 selectedAnswerIdFlow.emit(null)

@@ -1,6 +1,5 @@
 package ru.fredboy.quizapp.presentation.quizlist.model
 
-import androidx.navigation3.runtime.NavBackStack
 import app.cash.turbine.test
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -31,8 +30,6 @@ class QuizListViewModelTest {
 
     private val invalidateCachedQuizzesUseCase = mock<InvalidateCachedQuizzesUseCase>()
 
-    private val navBackStack = mock<NavBackStack>()
-
     private lateinit var viewModel: QuizListViewModel
 
     @BeforeEach
@@ -41,7 +38,6 @@ class QuizListViewModelTest {
             getQuizListUseCase = getQuizListUseCase,
             observeQuizStatusUseCase = observeQuizStatusUseCase,
             invalidateCachedQuizzesUseCase = invalidateCachedQuizzesUseCase,
-            navBackStack = navBackStack,
         )
     }
 

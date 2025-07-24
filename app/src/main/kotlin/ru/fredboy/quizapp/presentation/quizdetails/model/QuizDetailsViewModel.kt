@@ -1,8 +1,6 @@
 package ru.fredboy.quizapp.presentation.quizdetails.model
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation3.runtime.NavBackStack
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,6 +17,8 @@ import kotlinx.coroutines.launch
 import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.common.model.BaseViewModel
+import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
 import ru.fredboy.quizapp.presentation.question.model.QuestionViewModelParams
 import ru.fredboy.quizapp.presentation.question.navigation.QuestionNavKey
 
@@ -27,9 +27,8 @@ class QuizDetailsViewModel(
     private val getQuizUseCase: GetQuizUseCase,
     private val observeQuizStatusUseCase: ObserveQuizStatusUseCase,
     private val invalidateCachedQuizUseCase: InvalidateCachedQuizUseCase,
-    private val navBackStack: NavBackStack,
     private val params: QuizDetailsViewModelParams,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val reloadTrigger = MutableSharedFlow<QuizDetailsReloadEvent>(replay = 0)
 
@@ -77,13 +76,17 @@ class QuizDetailsViewModel(
     }
 
     fun onStartQuiz() {
-        navBackStack.add(
-            element = QuestionNavKey(
-                params = QuestionViewModelParams(
-                    quizId = params.quizId,
+        viewModelScope.launch {
+            _navigationEventFlow.emit(
+                NavigationEvent.PushToBackStack(
+                    navKey = QuestionNavKey(
+                        params = QuestionViewModelParams(
+                            quizId = params.quizId,
+                        ),
+                    ),
                 ),
-            ),
-        )
+            )
+        }
     }
 
     companion object {
