@@ -6,18 +6,23 @@ import androidx.navigation3.runtime.NavBackStack
 import ru.fredboy.quizapp.presentation.common.model.BaseViewModel
 
 @Composable
-fun ListenNavigationEvents(
+fun ListenNavBackStackEvent(
     viewModel: BaseViewModel,
     navBackStack: NavBackStack,
 ) {
     LaunchedEffect(Unit) {
-        viewModel.navigationEventFlow.collect { event ->
+        viewModel.navBackStackEventFlow.collect { event ->
             when (event) {
-                is NavigationEvent.PushToBackStack -> {
+                is NavBackStackEvent.Push -> {
                     navBackStack.add(event.navKey)
                 }
-                is NavigationEvent.PopBackStack -> {
+
+                is NavBackStackEvent.Pop -> {
                     navBackStack.removeLastOrNull()
+                }
+
+                is NavBackStackEvent.ReplaceTop -> {
+                    navBackStack[navBackStack.lastIndex] = event.navKey
                 }
             }
         }

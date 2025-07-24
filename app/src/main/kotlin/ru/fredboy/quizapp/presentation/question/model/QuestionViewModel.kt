@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -19,7 +20,11 @@ import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.SaveQuizStatusUseCase
 import ru.fredboy.quizapp.presentation.common.model.BaseViewModel
-import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
+import ru.fredboy.quizapp.presentation.common.navigation.NavBackStackEvent
+import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
+import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
+import ru.fredboy.quizapp.presentation.quizresult.model.QuizResultViewModelParams
+import ru.fredboy.quizapp.presentation.quizresult.navigation.QuizResultNavKey
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class QuestionViewModel(
@@ -50,13 +55,23 @@ class QuestionViewModel(
 
                 emit(getQuizUseCase(params.quizId))
             }.catch { throwable -> throw throwable }
-        }
+        }.map { quizDetails ->
+            Result.success(quizDetails)
+        }.catch { throwable ->
+            logger.e(throwable) { "Error loading quiz" }
+            emit(Result.failure(throwable))
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = Result.success(null),
+        )
 
     val questionState: StateFlow<QuestionState> = combine(
         flow = quizFlow,
         flow2 = questionIndexFlow,
         flow3 = selectedAnswerIdFlow,
-    ) { quiz, questionIndex, selectedAnswerId ->
+    ) { quizResult, questionIndex, selectedAnswerId ->
+        val quiz = quizResult.getOrThrow()
         quiz?.let {
             QuestionState.Success(
                 questionVo = QuestionVo(
@@ -95,16 +110,36 @@ class QuestionViewModel(
             }
 
             if (nextIndex >= quizQuestions) {
+                val quizTitle = quizFlow.value.getOrNull()?.title ?: run {
+                    logger.w { "Quiz was missing on completion!" }
+                    getQuizUseCase.invoke(params.quizId).title
+                }
+
+                val quizResult = if (correctAnswers >= state.questionVo.passingScore) {
+                    QuizStatus.PASSED
+                } else {
+                    QuizStatus.FAILED
+                }
+
                 saveQuizStatusUseCase(
                     quizId = params.quizId,
-                    status = if (correctAnswers >= state.questionVo.passingScore) {
-                        QuizStatus.PASSED
-                    } else {
-                        QuizStatus.FAILED
-                    },
+                    status = quizResult,
                 )
 
-                _navigationEventFlow.emit(NavigationEvent.PopBackStack)
+                emitNavBackStackEvent(
+                    event = NavBackStackEvent.ReplaceTop(
+                        navKey = QuizResultNavKey(
+                            params = QuizResultViewModelParams(
+                                quizId = params.quizId,
+                                title = quizTitle,
+                                result = quizResult,
+                                correctAnswers = correctAnswers,
+                                totalQuestions = state.questionVo.total,
+                                passingScore = state.questionVo.passingScore,
+                            ),
+                        ),
+                    ),
+                )
             } else {
                 questionIndexFlow.emit(nextIndex)
                 selectedAnswerIdFlow.emit(null)
@@ -116,6 +151,18 @@ class QuestionViewModel(
         viewModelScope.launch {
             reloadTrigger.emit(QuestionReloadEvent.Reload)
         }
+    }
+
+    fun backToDetails() {
+        emitNavBackStackEvent(
+            event = NavBackStackEvent.ReplaceTop(
+                navKey = QuizDetailsNavKey(
+                    params = QuizDetailsViewModelParams(
+                        quizId = params.quizId,
+                    ),
+                ),
+            ),
+        )
     }
 
     companion object {

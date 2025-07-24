@@ -8,6 +8,7 @@ import ru.fredboy.quizapp.domain.di.domainModule
 import ru.fredboy.quizapp.presentation.question.model.QuestionViewModel
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModel
 import ru.fredboy.quizapp.presentation.quizlist.model.QuizListViewModel
+import ru.fredboy.quizapp.presentation.quizresult.model.QuizResultViewModel
 
 val applicationModule = module {
 
@@ -39,6 +40,12 @@ val applicationModule = module {
             getQuizUseCase = get(),
             invalidateCachedQuizUseCase = get(),
             saveQuizStatusUseCase = get(),
+            params = get(),
+        )
+    }
+
+    viewModel<QuizResultViewModel> {
+        QuizResultViewModel(
             params = get(),
         )
     }

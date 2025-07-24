@@ -17,7 +17,9 @@ import ru.fredboy.quizapp.domain.model.QuizStatus
 import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.SaveQuizStatusUseCase
-import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
+import ru.fredboy.quizapp.presentation.common.navigation.NavBackStackEvent
+import ru.fredboy.quizapp.presentation.quizresult.model.QuizResultViewModelParams
+import ru.fredboy.quizapp.presentation.quizresult.navigation.QuizResultNavKey
 import kotlin.test.assertEquals
 
 class QuestionViewModelTest {
@@ -117,12 +119,26 @@ class QuestionViewModelTest {
             awaitItem()
         }
 
-        viewModel.navigationEventFlow.test {
+        viewModel.navBackStackEventFlow.test {
             viewModel.onNextClicked()
             val navigationEvent = awaitItem()
 
             verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.PASSED)
-            assertEquals(NavigationEvent.PopBackStack, navigationEvent)
+            assertEquals(
+                expected = NavBackStackEvent.ReplaceTop(
+                    navKey = QuizResultNavKey(
+                        params = QuizResultViewModelParams(
+                            quizId = quizDetails.id,
+                            title = quizDetails.title,
+                            result = QuizStatus.PASSED,
+                            correctAnswers = 2,
+                            totalQuestions = quizDetails.questions.size,
+                            passingScore = quizDetails.passingScore,
+                        ),
+                    ),
+                ),
+                actual = navigationEvent,
+            )
         }
     }
 
@@ -139,12 +155,26 @@ class QuestionViewModelTest {
             viewModel.onAnswerSelected(2)
             awaitItem()
         }
-        viewModel.navigationEventFlow.test {
+        viewModel.navBackStackEventFlow.test {
             viewModel.onNextClicked()
             val navigationEvent = awaitItem()
 
             verify(saveQuizStatusUseCase).invoke(quizId, QuizStatus.FAILED)
-            assertEquals(NavigationEvent.PopBackStack, navigationEvent)
+            assertEquals(
+                expected = NavBackStackEvent.ReplaceTop(
+                    navKey = QuizResultNavKey(
+                        params = QuizResultViewModelParams(
+                            quizId = quizDetails.id,
+                            title = quizDetails.title,
+                            result = QuizStatus.FAILED,
+                            correctAnswers = 1,
+                            totalQuestions = quizDetails.questions.size,
+                            passingScore = quizDetails.passingScore,
+                        ),
+                    ),
+                ),
+                actual = navigationEvent,
+            )
         }
     }
 

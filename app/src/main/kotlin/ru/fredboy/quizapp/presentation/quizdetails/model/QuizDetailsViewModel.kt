@@ -18,7 +18,7 @@ import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
 import ru.fredboy.quizapp.presentation.common.model.BaseViewModel
-import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
+import ru.fredboy.quizapp.presentation.common.navigation.NavBackStackEvent
 import ru.fredboy.quizapp.presentation.question.model.QuestionViewModelParams
 import ru.fredboy.quizapp.presentation.question.navigation.QuestionNavKey
 
@@ -76,17 +76,15 @@ class QuizDetailsViewModel(
     }
 
     fun onStartQuiz() {
-        viewModelScope.launch {
-            _navigationEventFlow.emit(
-                NavigationEvent.PushToBackStack(
-                    navKey = QuestionNavKey(
-                        params = QuestionViewModelParams(
-                            quizId = params.quizId,
-                        ),
+        emitNavBackStackEvent(
+            event = NavBackStackEvent.ReplaceTop(
+                navKey = QuestionNavKey(
+                    params = QuestionViewModelParams(
+                        quizId = params.quizId,
                     ),
                 ),
-            )
-        }
+            ),
+        )
     }
 
     companion object {

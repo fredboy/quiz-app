@@ -20,7 +20,7 @@ import androidx.navigation3.runtime.NavBackStack
 import ru.fredboy.quizapp.R
 import ru.fredboy.quizapp.presentation.common.component.CommonErrorBox
 import ru.fredboy.quizapp.presentation.common.component.CommonScaffold
-import ru.fredboy.quizapp.presentation.common.navigation.ListenNavigationEvents
+import ru.fredboy.quizapp.presentation.common.navigation.ListenNavBackStackEvent
 import ru.fredboy.quizapp.presentation.quizlist.component.QuizList
 import ru.fredboy.quizapp.presentation.quizlist.model.QuizListReloadEvent
 import ru.fredboy.quizapp.presentation.quizlist.model.QuizListState
@@ -36,7 +36,7 @@ fun QuizListScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val state by viewModel.quizListState.collectAsStateWithLifecycle()
 
-    ListenNavigationEvents(viewModel, navBackStack)
+    ListenNavBackStackEvent(viewModel, navBackStack)
 
     PullToRefreshBox(
         modifier = Modifier
