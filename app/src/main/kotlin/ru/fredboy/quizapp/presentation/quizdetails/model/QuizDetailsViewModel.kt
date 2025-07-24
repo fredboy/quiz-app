@@ -1,6 +1,5 @@
 package ru.fredboy.quizapp.presentation.quizdetails.model
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,6 +17,10 @@ import kotlinx.coroutines.launch
 import ru.fredboy.quizapp.domain.usecase.GetQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.common.model.BaseViewModel
+import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
+import ru.fredboy.quizapp.presentation.question.model.QuestionViewModelParams
+import ru.fredboy.quizapp.presentation.question.navigation.QuestionNavKey
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class QuizDetailsViewModel(
@@ -25,7 +28,7 @@ class QuizDetailsViewModel(
     private val observeQuizStatusUseCase: ObserveQuizStatusUseCase,
     private val invalidateCachedQuizUseCase: InvalidateCachedQuizUseCase,
     private val params: QuizDetailsViewModelParams,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val reloadTrigger = MutableSharedFlow<QuizDetailsReloadEvent>(replay = 0)
 
@@ -36,9 +39,6 @@ class QuizDetailsViewModel(
                 val state = when (event) {
                     QuizDetailsReloadEvent.Initial, QuizDetailsReloadEvent.Reload ->
                         QuizDetailsState.Loading
-
-                    is QuizDetailsReloadEvent.Refresh ->
-                        QuizDetailsState.Refreshing(event.backgroundState)
                 }
 
                 emit(state)
@@ -72,6 +72,20 @@ class QuizDetailsViewModel(
         logger.d { "Reload triggered" }
         viewModelScope.launch {
             reloadTrigger.emit(reloadEvent)
+        }
+    }
+
+    fun onStartQuiz() {
+        viewModelScope.launch {
+            _navigationEventFlow.emit(
+                NavigationEvent.PushToBackStack(
+                    navKey = QuestionNavKey(
+                        params = QuestionViewModelParams(
+                            quizId = params.quizId,
+                        ),
+                    ),
+                ),
+            )
         }
     }
 

@@ -2,7 +2,9 @@ package ru.fredboy.quizapp.presentation.quizlist.model
 
 sealed interface QuizListReloadEvent {
 
-    data object Initial : QuizListReloadEvent
+    data class Initial(
+        val lastSuccessState: QuizListState.Success?,
+    ) : QuizListReloadEvent
 
     data object Reload : QuizListReloadEvent
 

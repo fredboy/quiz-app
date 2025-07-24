@@ -11,8 +11,4 @@ sealed interface QuizDetailsState {
     data class Success(
         val quizDetails: QuizDetailsVo,
     ) : QuizDetailsState
-
-    data class Refreshing(
-        val lastState: QuizDetailsState,
-    ) : QuizDetailsState
 }

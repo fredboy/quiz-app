@@ -5,47 +5,60 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavBackStack
 import ru.fredboy.quizapp.R
 import ru.fredboy.quizapp.presentation.common.component.CommonErrorBox
+import ru.fredboy.quizapp.presentation.common.component.CommonScaffold
+import ru.fredboy.quizapp.presentation.common.navigation.ListenNavigationEvents
 import ru.fredboy.quizapp.presentation.quizdetails.component.QuizPage
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsReloadEvent
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsState
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModel
-import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsVo
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun QuizDetailsScreen(
-    contentPadding: PaddingValues,
     viewModel: QuizDetailsViewModel,
-    modifier: Modifier = Modifier,
+    navBackStack: NavBackStack,
 ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val quizDetailsState by viewModel.quizDetailsState.collectAsStateWithLifecycle()
 
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 16.dp),
-    ) {
-        QuizDetailsScreen(
-            state = quizDetailsState,
-            onStartQuizClick = { },
-            onReload = { viewModel.onReload(QuizDetailsReloadEvent.Reload) },
-            modifier = modifier,
-            contentPadding = contentPadding,
-        )
+    ListenNavigationEvents(viewModel, navBackStack)
+
+    CommonScaffold(
+        scrollBehavior = scrollBehavior,
+    ) { contentPadding ->
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp),
+        ) {
+            QuizDetailsScreen(
+                state = quizDetailsState,
+                onStartQuizClick = viewModel::onStartQuiz,
+                onReload = { viewModel.onReload(QuizDetailsReloadEvent.Reload) },
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                contentPadding = contentPadding,
+            )
+        }
     }
 }
 
 @Composable
 fun QuizDetailsScreen(
     state: QuizDetailsState,
-    onStartQuizClick: (QuizDetailsVo) -> Unit,
+    onStartQuizClick: () -> Unit,
     onReload: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -70,17 +83,9 @@ fun QuizDetailsScreen(
         is QuizDetailsState.Success -> {
             QuizPage(
                 quizDetailsVo = state.quizDetails,
-                contentPadding = contentPadding,
-            )
-        }
-
-        is QuizDetailsState.Refreshing -> {
-            QuizDetailsScreen(
-                state = state.lastState,
-                onStartQuizClick = onStartQuizClick,
-                onReload = onReload,
                 modifier = modifier,
                 contentPadding = contentPadding,
+                onStartQuizClick = onStartQuizClick,
             )
         }
     }

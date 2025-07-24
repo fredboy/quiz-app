@@ -1,6 +1,5 @@
 package ru.fredboy.quizapp.presentation.quizlist.model
 
-import androidx.navigation3.runtime.NavBackStack
 import app.cash.turbine.test
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -20,6 +19,7 @@ import ru.fredboy.quizapp.domain.model.Quizzes
 import ru.fredboy.quizapp.domain.usecase.GetQuizListUseCase
 import ru.fredboy.quizapp.domain.usecase.InvalidateCachedQuizzesUseCase
 import ru.fredboy.quizapp.domain.usecase.ObserveQuizStatusUseCase
+import ru.fredboy.quizapp.presentation.common.navigation.NavigationEvent
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
 import ru.fredboy.quizapp.presentation.quizdetails.navigation.QuizDetailsNavKey
 
@@ -31,8 +31,6 @@ class QuizListViewModelTest {
 
     private val invalidateCachedQuizzesUseCase = mock<InvalidateCachedQuizzesUseCase>()
 
-    private val navBackStack = mock<NavBackStack>()
-
     private lateinit var viewModel: QuizListViewModel
 
     @BeforeEach
@@ -41,7 +39,6 @@ class QuizListViewModelTest {
             getQuizListUseCase = getQuizListUseCase,
             observeQuizStatusUseCase = observeQuizStatusUseCase,
             invalidateCachedQuizzesUseCase = invalidateCachedQuizzesUseCase,
-            navBackStack = navBackStack,
         )
     }
 
@@ -110,10 +107,20 @@ class QuizListViewModelTest {
     fun `pushes quiz details nav key to back stack on click`() = runTest {
         val quizVo = mockQuizVos().last()
 
-        viewModel.onQuizClick(quizVo)
+        viewModel.navigationEventFlow.test {
+            viewModel.onQuizClick(quizVo)
 
-        verify(navBackStack, times(1))
-            .add(QuizDetailsNavKey(QuizDetailsViewModelParams(quizVo.quiz.id)))
+            val navigationEvent = awaitItem()
+
+            assertEquals(
+                NavigationEvent.PushToBackStack(
+                    QuizDetailsNavKey(
+                        QuizDetailsViewModelParams(quizVo.quiz.id),
+                    ),
+                ),
+                navigationEvent,
+            )
+        }
     }
 
     companion object {

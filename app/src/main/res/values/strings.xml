@@ -10,6 +10,9 @@
     <string name="quiz_passing_score_percent">Passing score: %1$s%%</string>
     <string name="quiz_start">Start Quiz</string>
     <string name="quiz_retake">Retake Quiz</string>
+    <string name="quiz_question_number">Question %1$d of %2$d</string>
+    <string name="quiz_next">Next</string>
+    <string name="quiz_finish">Finish</string>
 
     <string name="common_error_retry">Retry</string>
     <string name="common_error_message_default">An error occurred</string>
