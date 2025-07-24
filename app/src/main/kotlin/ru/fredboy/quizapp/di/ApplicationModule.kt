@@ -5,6 +5,7 @@ import org.koin.dsl.module
 import ru.fredboy.quizapp.data.android.di.dataAndroidModule
 import ru.fredboy.quizapp.data.di.dataModule
 import ru.fredboy.quizapp.domain.di.domainModule
+import ru.fredboy.quizapp.presentation.question.model.QuestionViewModel
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModel
 import ru.fredboy.quizapp.presentation.quizlist.model.QuizListViewModel
 
@@ -16,21 +17,32 @@ val applicationModule = module {
         dataAndroidModule,
     )
 
-    viewModel<QuizListViewModel> { parameters ->
+    viewModel<QuizListViewModel> {
         QuizListViewModel(
             getQuizListUseCase = get(),
             observeQuizStatusUseCase = get(),
             invalidateCachedQuizzesUseCase = get(),
-            navBackStack = parameters.get(),
+            navBackStack = get(),
         )
     }
 
-    viewModel<QuizDetailsViewModel> { parameters ->
+    viewModel<QuizDetailsViewModel> {
         QuizDetailsViewModel(
             getQuizUseCase = get(),
             observeQuizStatusUseCase = get(),
             invalidateCachedQuizUseCase = get(),
-            params = parameters.get(),
+            navBackStack = get(),
+            params = get(),
+        )
+    }
+
+    viewModel<QuestionViewModel> {
+        QuestionViewModel(
+            getQuizUseCase = get(),
+            invalidateCachedQuizUseCase = get(),
+            saveQuizStatusUseCase = get(),
+            navBackStack = get(),
+            params = get(),
         )
     }
 }

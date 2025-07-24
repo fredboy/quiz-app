@@ -1,4 +1,4 @@
-package ru.fredboy.quizapp.presentation.quizlist.navigation
+package ru.fredboy.quizapp.presentation.question.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.Modifier
@@ -9,10 +9,13 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ru.fredboy.quizapp.presentation.common.navigation.QuizAppNavKey
-import ru.fredboy.quizapp.presentation.quizlist.ui.QuizListScreen
+import ru.fredboy.quizapp.presentation.question.model.QuestionViewModelParams
+import ru.fredboy.quizapp.presentation.question.ui.QuestionScreen
 
 @Serializable
-data object QuizListNavKey : QuizAppNavKey {
+data class QuestionNavKey(
+    val params: QuestionViewModelParams,
+) : QuizAppNavKey {
 
     override fun getNavEntry(
         scaffoldContentPadding: PaddingValues,
@@ -20,10 +23,10 @@ data object QuizListNavKey : QuizAppNavKey {
         navBackStack: NavBackStack,
     ): NavEntry<NavKey> {
         return NavEntry(this) {
-            QuizListScreen(
+            QuestionScreen(
                 contentPadding = scaffoldContentPadding,
                 viewModel = koinViewModel {
-                    parametersOf(navBackStack)
+                    parametersOf(navBackStack, params)
                 },
                 modifier = modifier,
             )

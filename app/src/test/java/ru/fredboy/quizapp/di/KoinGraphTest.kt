@@ -3,6 +3,7 @@ package ru.fredboy.quizapp.di
 import androidx.navigation3.runtime.NavBackStack
 import org.junit.jupiter.api.Test
 import org.koin.test.verify.verify
+import ru.fredboy.quizapp.presentation.question.model.QuestionViewModelParams
 import ru.fredboy.quizapp.presentation.quizdetails.model.QuizDetailsViewModelParams
 
 class KoinGraphTest {
@@ -13,6 +14,7 @@ class KoinGraphTest {
             extraTypes = listOf(
                 NavBackStack::class,
                 QuizDetailsViewModelParams::class,
+                QuestionViewModelParams::class,
             ),
         )
     }
