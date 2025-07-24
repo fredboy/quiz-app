@@ -107,6 +107,7 @@ class QuestionViewModel(
                 navBackStack.removeLastOrNull()
             } else {
                 questionIndexFlow.emit(nextIndex)
+                selectedAnswerIdFlow.emit(null)
             }
         }
     }
